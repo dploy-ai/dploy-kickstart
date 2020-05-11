@@ -1,5 +1,7 @@
 ## dploy-kickstart
 
+[![codecov](https://codecov.io/gh/dploy-ai/dploy-kickstart/branch/master/graph/badge.svg?token=KypiVRoPJz)](https://codecov.io/gh/dploy-ai/dploy-kickstart)
+
 Expose your Python functions via an HTTP API.
 
 ### Current dependency tree

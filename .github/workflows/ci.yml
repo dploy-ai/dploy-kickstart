@@ -21,8 +21,12 @@ jobs:
           echo "::add-path::$HOME/.poetry/bin/"
       - name: install deps
         run: poetry install -v
-      - name: pytest
-        run: poetry run pytest tests/
       - name: flake8
         run: poetry run flake8
+      - name: pytest
+        run: poetry run pytest --cov-report=xml --cov=dploy_kickstart tests/
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
 
