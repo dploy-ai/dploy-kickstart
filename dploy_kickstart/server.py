@@ -1,3 +1,5 @@
+"""Flask server logic."""
+
 import logging
 import typing
 
@@ -49,6 +51,7 @@ def append_entrypoint(
 
 
 def generate_app() -> typing.Generic:
+    """Generate a Flask app."""
     app = Flask(__name__)
 
     @app.route("/healthz/", methods=["GET"])

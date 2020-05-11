@@ -1,3 +1,5 @@
+"""CLI commands."""
+
 import os
 import logging
 import typing
@@ -15,6 +17,7 @@ log = logging.getLogger(__name__)
 
 @click.group()
 def cli() -> None:
+    """CLI entrypoint."""
     pass
 
 
@@ -30,13 +33,14 @@ def cli() -> None:
     + "be used as execution context)",
 )
 @click.option(
-    "-r",
-    "--reqs",
+    "-d",
+    "--deps",
     help="install dependencies; comma separated paths to either requirements.txt "
     + "or setup.py files. note that this can be run seperately via the "
-    + "'install_reqs' command",
+    + "'install-deps' command",
 )
 def serve(entrypoint: str, location: str, reqs: str) -> typing.Any:
+    """CLI serve."""
     if reqs:
         click.echo("Installing reqs: {}".format(reqs))
         deps(reqs, location)
@@ -61,8 +65,8 @@ def serve(entrypoint: str, location: str, reqs: str) -> typing.Any:
 
 @cli.command(help="install dependencies")
 @click.option(
-    "-r",
-    "--reqs",
+    "-d",
+    "--deps",
     required=True,
     help="comma separated paths to either requirements.txt or setup.py files",
 )
@@ -73,12 +77,14 @@ def serve(entrypoint: str, location: str, reqs: str) -> typing.Any:
     help="location of the script or notebook (and that will "
     + "be used as execution context)",
 )
-def install_reqs(reqs: str, location: str) -> None:
+def install_deps(reqs: str, location: str) -> None:
+    """CLI install dependencies."""
     click.echo("Installing reqs: {}".format(reqs))
     deps(reqs, location)
 
 
 def deps(reqs: str, location: str) -> None:
+    """Install deps."""
     for r in reqs.split(","):
         if r.endswith("requirements.txt"):
             pd.install_requirements_txt(os.path.join(location, r))

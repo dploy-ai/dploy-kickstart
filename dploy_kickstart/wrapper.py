@@ -1,3 +1,5 @@
+"""Function wrapping logic."""
+
 import importlib
 import os
 import sys
@@ -23,9 +25,8 @@ def nb_to_py(nb_file: str, location: str) -> str:
         import nbconvert
     except ImportError as e:
         raise Exception(
-            "Cannot import nbformat/nbconvert, was it added to the dependencies?\n{}".format(
-                e
-            )
+            "Cannot import nbformat/nbconvert, was it added "
+            "to the dependencies?\n{}".format(e)
         )
 
     handle, filename = tempfile.mkstemp(text=True, suffix=".py")
@@ -46,6 +47,7 @@ def nb_to_py(nb_file: str, location: str) -> str:
 
 
 def get_func_annotations(mod: typing.Generic) -> typing.Dict:
+    """Scan usercode for function annotations."""
     cm = []
     # check which functions have relevant args and return 'em
     for name, val in mod.__dict__.items():
@@ -58,6 +60,7 @@ def get_func_annotations(mod: typing.Generic) -> typing.Dict:
 
 
 def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
+    """Import entryoint from user code."""
     # assert if entrypoint contains a path prefix and if so add it to location
     if os.path.dirname(entrypoint) != "":
         location = os.path.join(location, os.path.dirname(entrypoint))
@@ -95,10 +98,7 @@ def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
 
 
 def func_wrapper(f: typing.Callable) -> typing.Callable:
-    """Wrap our functions with some request logic.
-    Make sure that our wrapped function gets a correct payload and that
-    Flask knows how to handle the returned data.
-    """
+    """Wrap functions with request logic."""
 
     def exposed_func() -> typing.Callable:
         # some sanity checking

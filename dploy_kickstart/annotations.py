@@ -1,10 +1,15 @@
+"""Function annotations processors."""
+
 import inspect
 import typing
 import re
 
 
 class AnnotatedCallable:
+    """Wrap a callable and allow annotation (comments) extraction."""
+
     def __init__(self, callble: typing.Callable) -> None:
+        """Init class by passing callable."""
         # avoid shadowing 'callable' method
         self.callble = callble
 
@@ -23,16 +28,9 @@ class AnnotatedCallable:
         self.comment_args = self.parse_comments(comments)
         self.evaluate_comment_args()
 
-    # def fetch_comments(self) -> None:
-    #     cs = inspect.getcomments(self.callble)
-    #     if cs:
-    #         for c in cs.splitlines():
-    #             args = self.clean_comment(c)
-    #             if args:
-    #                 self.comment_args.append(args)
-
     @staticmethod
     def parse_comments(cs: str) -> None:
+        """Parse comments."""
         args = []
         if not cs:
             return args
@@ -50,29 +48,19 @@ class AnnotatedCallable:
 
         return args
 
-    # @staticmethod
-    # def clean_comment(c: str) -> typing.List:
-    #     # ignore all annotations that do not follow this signature
-    #     if "#' @dploy " not in c:
-    #         return
-    #     # func args are defined in form of "#' @dploy arg1 arg2 arg3"
-    #     # strip off prefix
-    #     c = c.split("#' @dploy ", 1)[-1]
-    #     # clean up whitespaces
-    #     c = c.strip()
-    #     # generate list of args
-    #     return c.split(" ")
-
     def evaluate_comment_args(self) -> None:
+        """Evaluate comments and act accordingly."""
         for c in self.comment_args:
             if c[0] == "endpoint":
                 self.endpoint = True
                 self.endpoint_path = "/{}/".format(c[1])
 
     def has_args(self) -> bool:
+        """Return if callable has comment annotation arguments."""
         return len(self.comment_args) > 0
 
     def __call__(self, *args, **kwargs) -> typing.Any:
+        """Allow calling of original callable."""
         return self.callble(*args, **kwargs)
 
     def __name__(self) -> str:

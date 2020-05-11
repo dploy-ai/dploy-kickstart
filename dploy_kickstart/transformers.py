@@ -1,8 +1,11 @@
+"""Utilities to transform requests and responses."""
+
 import typing
 from flask import jsonify, Response
 
 
 def json_resp(func_result: typing.Any) -> Response:
+    """Transform json response."""
     if type(func_result) == str:
         return func_result
     else:

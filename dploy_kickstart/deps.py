@@ -1,21 +1,25 @@
+"""Dependency installation logic."""
+
+
 import sys
 import os
 import subprocess
 
 
 class RequirementsInstallException(Exception):
+    """Requirements installation exception."""
+
     pass
 
 
 class SetupPyInstallException(Exception):
-    pass
+    """Setup.py installation exception."""
 
-
-class PipenvInstallException(Exception):
     pass
 
 
 def install_requirements_txt(requirements_txt_location: str) -> None:
+    """Install requirements from a requirements.txt file."""
     # see https://pip.pypa.io/en/latest/user_guide/#using-pip-from-your-program
     # need to do sys call
     cmd = "{} -m pip install -r {}".format(sys.executable, requirements_txt_location)
@@ -27,6 +31,7 @@ def install_requirements_txt(requirements_txt_location: str) -> None:
 
 
 def install_setup_py(setup_py_location: str) -> None:
+    """Install requirements from a setup.py file."""
     # see https://pip.pypa.io/en/latest/user_guide/#using-pip-from-your-program
     # need to do sys call
     setup_py_dir_location = os.path.dirname(setup_py_location)
@@ -39,6 +44,7 @@ def install_setup_py(setup_py_location: str) -> None:
 
 
 def execute_cmd(cmd: str, wd: str = None) -> int:
+    """Execute a shell command."""
     # we call it like this because the normal exception
     # subprocess.CalledProcessError doesnt return the stderr
     # of the pip call itself (it just says it fails)
