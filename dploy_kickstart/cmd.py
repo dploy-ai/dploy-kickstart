@@ -1,0 +1,92 @@
+import os
+import logging
+import typing
+
+import click
+from waitress import serve as waitress_serve
+from paste.translogger import TransLogger
+
+from dploy_kickstart import deps as pd
+from dploy_kickstart import server as ps
+
+
+log = logging.getLogger(__name__)
+
+
+@click.group()
+def cli() -> None:
+    pass
+
+
+@cli.command(help="run dploy_kickstart server")
+@click.option(
+    "-e", "--entrypoint", required=True, help=".py or .ipynb to use as entrypoint"
+)
+@click.option(
+    "-l",
+    "--location",
+    required=True,
+    help="location of the script or notebook (and that will "
+    + "be used as execution context)",
+)
+@click.option(
+    "-r",
+    "--reqs",
+    help="install dependencies; comma separated paths to either requirements.txt "
+    + "or setup.py files. note that this can be run seperately via the "
+    + "'install_reqs' command",
+)
+def serve(entrypoint: str, location: str, reqs: str) -> typing.Any:
+    if reqs:
+        click.echo("Installing reqs: {}".format(reqs))
+        deps(reqs, location)
+
+    app = ps.generate_app()
+    app = ps.append_entrypoint(app, entrypoint, os.path.abspath(location))
+
+    if os.getenv("DTAP") != "production":
+        click.echo("Starting Flask Development server")
+        app.run(
+            host=os.getenv("dploy_kickstart_HOST", "0.0.0.0"),
+            port=int(os.getenv("dploy_kickstart_PORT", 8080)),
+        )
+    else:
+        click.echo("Starting Waitress server")
+        waitress_serve(
+            TransLogger(app, setup_console_handler=False),
+            host=os.getenv("dploy_kickstart_HOST", "0.0.0.0"),
+            port=int(os.getenv("dploy_kickstart_PORT", 8080)),
+        )
+
+
+@cli.command(help="install dependencies")
+@click.option(
+    "-r",
+    "--reqs",
+    required=True,
+    help="comma separated paths to either requirements.txt or setup.py files",
+)
+@click.option(
+    "-l",
+    "--location",
+    required=True,
+    help="location of the script or notebook (and that will "
+    + "be used as execution context)",
+)
+def install_reqs(reqs: str, location: str) -> None:
+    click.echo("Installing reqs: {}".format(reqs))
+    deps(reqs, location)
+
+
+def deps(reqs: str, location: str) -> None:
+    for r in reqs.split(","):
+        if r.endswith("requirements.txt"):
+            pd.install_requirements_txt(os.path.join(location, r))
+        elif r.endswith("setup.py"):
+            pd.install_setup_py(os.path.join(location, r))
+        else:
+            raise Exception(
+                "unsupported dependency install defined: {}. "
+                "Supported formats: "
+                "requirements.txt, setup.py".format(r)
+            )
