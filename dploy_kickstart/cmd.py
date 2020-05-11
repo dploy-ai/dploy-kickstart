@@ -39,16 +39,22 @@ def cli() -> None:
     + "or setup.py files. note that this can be run seperately via the "
     + "'install-deps' command",
 )
-def serve(entrypoint: str, location: str, reqs: str) -> typing.Any:
+@click.option(
+    "--wsgi/--no-wsgi",
+    default=True,
+    help="Use Waitress as a WSGI server, defaults to True,"
+    + " else launches a Flask debug server.",
+)
+def serve(entrypoint: str, location: str, deps: str, wsgi: bool) -> typing.Any:
     """CLI serve."""
-    if reqs:
-        click.echo("Installing reqs: {}".format(reqs))
-        deps(reqs, location)
+    if deps:
+        click.echo("Installing deps: {}".format(deps))
+        deps(deps, location)
 
     app = ps.generate_app()
     app = ps.append_entrypoint(app, entrypoint, os.path.abspath(location))
 
-    if os.getenv("DTAP") != "production":
+    if not wsgi:
         click.echo("Starting Flask Development server")
         app.run(
             host=os.getenv("dploy_kickstart_HOST", "0.0.0.0"),
