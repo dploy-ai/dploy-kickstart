@@ -24,7 +24,7 @@ jobs:
       - name: flake8
         run: poetry run flake8
       - name: pytest
-        run: poetry run pytest --cov-report=xml:{{github.workspace}}/coverage.xml --cov=dploy_kickstart tests/
+        run: poetry run pytest --cov-report=xml:$GITHUB_WORKSPACE/coverage.xml --cov=dploy_kickstart tests/
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
