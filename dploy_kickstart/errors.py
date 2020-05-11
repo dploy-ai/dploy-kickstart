@@ -18,17 +18,6 @@ class ScriptImportError(ServerException):
         return dict(message=self.message)
 
 
-class FuncArgProcessingError(ServerException):
-    status_code = 500
-
-    def __init__(self, func: str, arg: str):
-        super().__init__(self, func, arg)
-        self.message = "arg '{}' for func '{}'not supported".format(arg, func)
-
-    def to_dict(self) -> dict:
-        return dict(message=self.message)
-
-
 class UnsupportedEntrypoint(ServerException):
     status_code = 500
 

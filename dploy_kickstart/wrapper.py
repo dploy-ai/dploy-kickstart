@@ -97,7 +97,7 @@ def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
     return mod
 
 
-def func_wrapper(f: typing.Callable) -> typing.Callable:
+def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
     """Wrap functions with request logic."""
 
     def exposed_func() -> typing.Callable:
@@ -112,7 +112,7 @@ def func_wrapper(f: typing.Callable) -> typing.Callable:
 
         # preprocess input for callable
         try:
-            res = pt.MIME_TYPE_REQ_MAPPER[request.content_type](f, request)
+            res = pt.MIME_TYPE_REQ_MAPPER[f.response_mimetype](f, request)
         except Exception:
             raise pe.UserApplicationError(
                 message="error in executing '{}'".format(f.__name__),

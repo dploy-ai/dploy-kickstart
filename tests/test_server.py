@@ -73,6 +73,18 @@ def test_client():
             True,
             500,
         ),
+        # test json_to_kwargs
+        (
+            "check_mimetypes.py",
+            "post",
+            "/xyz/",
+            {"a": 1, "b": 2, "c": 3},
+            6,
+            "application/json",
+            "application/json",
+            False,
+            200,
+        ),
     ],
 )
 def test_sever_generation(

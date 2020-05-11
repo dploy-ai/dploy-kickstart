@@ -19,12 +19,11 @@ def append_entrypoint(
     mod = pw.import_entrypoint(entrypoint, location)
     fm = pw.get_func_annotations(mod)
 
-    if len(list(filter(lambda e: e.endpoint, fm))) == 0:
+    if not any([e.endpoint for e in fm]):
         raise Exception("no endpoints defined")
 
     openapi_spec = po.base_spec(title=entrypoint)
     # iterate over annotations in usercode
-    # only add /predict endpoint
     for f in fm:
         if f.endpoint:
             log.debug(

@@ -27,6 +27,11 @@ def t3():
 # should raise an error for a non callable
 t4 = 4
 
+# ignore the '
+# @dploy endpoint xyz
+def t5():
+    return 1
+
 
 @pytest.mark.parametrize(
     "callable,endpoint,endpoint_path,has_args,output, error",
@@ -35,6 +40,7 @@ t4 = 4
         (t2, False, None, False, 1, False),
         (t3, True, "/blaaa/", True, 2, False),
         (t4, True, "/blaaa/", True, 2, True),
+        (t5, True, "/xyz/", True, 1, False),
     ],
 )
 def test_callable_annotation(
@@ -126,10 +132,18 @@ def test_annotated_scripts(py_file, expected):
         [
             """
         # irrelevant
-        #' @dploy foo"
-        #' @dploy foo bar"
+        #' @dploy foo
+        #' @dploy foo bar
         """,
             [["foo"], ["foo", "bar"]],
+        ],
+        [
+            """
+        # irrelevant
+        #' @dploy endpoint x"
+        # @dploy endpoint x"
+        """,
+            [["endpoint", "x"], ["endpoint", "x"]],
         ],
     ],
 )

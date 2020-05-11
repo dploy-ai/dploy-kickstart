@@ -4,6 +4,9 @@ import inspect
 import typing
 import re
 
+import dploy_kickstart.transformers as dt
+import dploy_kickstart.errors as de
+
 
 class AnnotatedCallable:
     """Wrap a callable and allow annotation (comments) extraction."""
@@ -20,6 +23,9 @@ class AnnotatedCallable:
         self.endpoint_method = "POST"
         self.accepts_json = True
         self.returns_json = True
+        self.response_mimetype = "application/json"
+        self.request_content_type = "application/json"
+        self.json_to_kwargs = False
 
         if not callable(callble):
             raise Exception("Trying to parse annotations on non-callable object")
@@ -45,7 +51,7 @@ class AnnotatedCallable:
             # remove redundant whitespace
             arg = " ".join(arg.split())
             args.append(slice_n_dice(arg))
-
+        print(999, args)
         return args
 
     def evaluate_comment_args(self) -> None:
@@ -54,6 +60,27 @@ class AnnotatedCallable:
             if c[0] == "endpoint":
                 self.endpoint = True
                 self.endpoint_path = "/{}/".format(c[1])
+
+            if c[0] == "response_mimetype":
+                if not c[1] in dt.MIME_TYPE_RES_MAPPER.keys():
+                    raise de.UnsupportedMediaType(
+                        "unsupported response_mimetype set for function {}".format(
+                            self.callble.__name__
+                        )
+                    )
+                self.response_mimetype = c[1]
+
+            if c[0] == "request_content_type":
+                if not c[1] in dt.MIME_TYPE_REQ_MAPPER.keys():
+                    raise de.UnsupportedMediaType(
+                        "unsupported request_content_type set for function {}".format(
+                            self.callble.__name__
+                        )
+                    )
+                self.request_content_type = c[1]
+
+            if c[0] == "json_to_kwargs":
+                self.json_to_kwargs = True
 
     def has_args(self) -> bool:
         """Return if callable has comment annotation arguments."""
