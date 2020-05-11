@@ -16,7 +16,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: install poetry
-        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python;
+          echo "::add-path::$HOME/.poetry/bin/"
       - name: install deps
         run: poetry install -v
       - name: pytest
