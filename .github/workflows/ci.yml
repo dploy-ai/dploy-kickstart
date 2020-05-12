@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   test:
-    name: tests
+    name: test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,3 +30,32 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
 
+  build:
+    needs: test
+    name: build-and-publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup python37
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: install poetry
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python;
+          echo "::add-path::$HOME/.poetry/bin/"
+      - name: install deps
+        run: poetry install -v
+      - name: build package
+        run: poetry build
+      - name: Publish distribution 📦 to Test PyPI
+        if: github.event.base_ref == 'refs/heads/master'
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.TEST_PYPI_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+      - name: Publish distribution 📦 to PyPI
+        if: startsWith(github.event.ref, 'refs/tags') && github.event.base_ref == 'refs/heads/master'
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
