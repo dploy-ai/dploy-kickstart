@@ -1,8 +1,9 @@
 name: Upload to pypi
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+    - '*'
 
 jobs:
   publish:
@@ -23,11 +24,13 @@ jobs:
       - name: build package
         run: poetry build
       - name: Publish distribution 📦 to Test PyPI
+        if: startsWith(github.ref, 'refs/tags/test-pypi-')
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.TEST_PYPI_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
+        if: startsWith(github.ref, 'refs/tags/test-pypi-') == false
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.PYPI_TOKEN }}
