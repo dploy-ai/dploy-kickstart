@@ -51,7 +51,6 @@ class AnnotatedCallable:
             # remove redundant whitespace
             arg = " ".join(arg.split())
             args.append(slice_n_dice(arg))
-        print(999, args)
         return args
 
     def evaluate_comment_args(self) -> None:

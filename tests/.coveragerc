@@ -1,13 +1,12 @@
-[run]
-branch = True
-source = dploy_kickstart
-
-[report]
-exclude_lines =
-    if self.debug:
-    pragma: no cover
-    raise NotImplementedError
-    if __name__ == .__main__.:
-ignore_errors = True
+[coverage:report]
+skip_empty = true
 omit =
-    tests/*
+    */*.py
+
+[run]
+show_missing = True
+omit =
+    */*.py
+
+[html]
+directory = coverage_html_report

@@ -45,7 +45,9 @@ def cli() -> None:
     help="Use Waitress as a WSGI server, defaults to True,"
     + " else launches a Flask debug server.",
 )
-def serve(entrypoint: str, location: str, deps: str, wsgi: bool) -> typing.Any:
+def serve(
+    entrypoint: str, location: str, deps: str, wsgi: bool, test=False
+) -> typing.Any:
     """CLI serve."""
     if deps:
         click.echo("Installing deps: {}".format(deps))
@@ -57,8 +59,8 @@ def serve(entrypoint: str, location: str, deps: str, wsgi: bool) -> typing.Any:
     if not wsgi:
         click.echo("Starting Flask Development server")
         app.run(
-            host=os.getenv("dploy_kickstart_HOST", "0.0.0.0"),
-            port=int(os.getenv("dploy_kickstart_PORT", 8080)),
+            host=os.getenv("DPLOY_KICKSTART_HOST", "0.0.0.0"),
+            port=int(os.getenv("DPLOY_KICKSTART_PORT", 8080)),
         )
     else:
         click.echo("Starting Waitress server")

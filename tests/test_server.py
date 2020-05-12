@@ -2,6 +2,7 @@ import os
 import logging
 import pytest
 import dploy_kickstart.server as ps
+from .fixtures import restore_wd
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=os.environ.get("LOGLEVEL", os.getenv("LOGLEVEL", "INFO")))
@@ -87,6 +88,7 @@ def test_client():
         ),
     ],
 )
+@pytest.mark.usefixtures("restore_wd")
 def test_sever_generation(
     entrypoint,
     method,
