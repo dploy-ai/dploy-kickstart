@@ -1,8 +1,9 @@
 [tool.poetry]
 name = "dploy-kickstart"
 version = "0.1.0"
-description = ""
+description = "Expose your functions as HTTP endpoints."
 authors = ["Bart Smeets <bart@dploy.ai>"]
+license = "MIT"
 
 [tool.poetry.scripts]
 kickstart = 'dploy_kickstart.cmd:cli'
