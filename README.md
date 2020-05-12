@@ -1,5 +1,7 @@
 ## dploy-kickstart
 
+[![maintained](https://img.shields.io/badge/maintained%20by-dploy.ai-brightgreen.svg)](https://dploy.ai/) 
+![workflow](https://github.com/dploy-ai/dploy-kickstart/workflows/kickstart/badge.svg)
 [![codecov](https://codecov.io/gh/dploy-ai/dploy-kickstart/branch/master/graph/badge.svg?token=KypiVRoPJz)](https://codecov.io/gh/dploy-ai/dploy-kickstart)
 
 Expose your Python functions via an HTTP API.
@@ -41,37 +43,22 @@ $ curl -d '{"foo":"bar"}' -H "Content-Type: application/json" -X POST http://loc
 
 Following annotation options are currently available.
 
-
-`# @dploy endpoint {endpoint_path}`
-> Will expose the annotated function on path {endpoint_path} with trailing slash (and redirect without trailing slash).
-
-`# @dploy response_mime_type {mimetype}`
-
-> Specify response mime type, will wrap function response accordingly.
-
-default: `application/json`
-
-available: 
-- `application/json`
-
-`# @dploy request_content_type {content_type}`
-> Specify allowed request content type.
-
-default: application/json
-
-available:
-- application/json
-
-`# @dploy request_method {method}`
-> Specify allowed request method.
-
-default: `post`
-
-available: any method supported by Flask
-
-`# @dploy json_to_kwargs`
-
-> Will map json payload's keys to function kwargs if supplied.
+- `# @dploy endpoint {endpoint_path}`  
+  Will expose the annotated function on path {endpoint_path} with trailing slash (and redirect without trailing slash).
+- `# @dploy response_mime_type {mimetype}`  
+  Specify response mime type, will wrap function response accordingly.
+  default: `application/json`  
+  available: `application/json`
+- `# @dploy request_content_type {content_type}`  
+  Specify allowed request content type.  
+  default: `application/json`
+  available: `application/json`
+- `# @dploy request_method {method}`  
+  Specify allowed request method.  
+  default: `post`  
+  available: any method supported by Flask
+- `# @dploy json_to_kwargs`  
+  Will map json payload's keys to function kwargs if supplied.
 
 ### Endpoint utilities
 
