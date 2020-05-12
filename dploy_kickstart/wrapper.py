@@ -102,17 +102,16 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
 
     def exposed_func() -> typing.Callable:
         # some sanity checking
-        # for now we only accept mimetype application/json
-        if request.content_type not in pt.MIME_TYPE_REQ_MAPPER.keys():
+        if request.content_type.lower() != f.request_content_type:
             raise pe.UnsupportedMediaType(
                 "Please provide a valid 'Content-Type' header, valid: {}".format(
-                    pt.MIME_TYPE_REQ_MAPPER.keys()
+                    f.request_content_type
                 )
             )
 
         # preprocess input for callable
         try:
-            res = pt.MIME_TYPE_REQ_MAPPER[f.response_mimetype](f, request)
+            res = pt.MIME_TYPE_REQ_MAPPER[f.response_mime_type](f, request)
         except Exception:
             raise pe.UserApplicationError(
                 message="error in executing '{}'".format(f.__name__),

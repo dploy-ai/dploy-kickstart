@@ -15,7 +15,7 @@ def path_spec(spec: APISpec, ac: AnnotatedCallable) -> None:
     spec.path(
         path=ac.endpoint_path,
         operations={
-            ac.endpoint_method.lower(): dict(
+            ac.request_method.lower(): dict(
                 requestBody={"content": {"application/json": {}}},
                 responses={"200": {"content": {"application/json": {}}}},
             )

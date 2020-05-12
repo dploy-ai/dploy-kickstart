@@ -20,10 +20,10 @@ class AnnotatedCallable:
 
         self.endpoint = False
         self.endpoint_path = None
-        self.endpoint_method = "POST"
+        self.request_method = "post"
         self.accepts_json = True
         self.returns_json = True
-        self.response_mimetype = "application/json"
+        self.response_mime_type = "application/json"
         self.request_content_type = "application/json"
         self.json_to_kwargs = False
 
@@ -60,23 +60,26 @@ class AnnotatedCallable:
                 self.endpoint = True
                 self.endpoint_path = "/{}/".format(c[1])
 
-            if c[0] == "response_mimetype":
-                if not c[1] in dt.MIME_TYPE_RES_MAPPER.keys():
+            if c[0] == "response_mime_type":
+                if not c[1].lower() in dt.MIME_TYPE_RES_MAPPER.keys():
                     raise de.UnsupportedMediaType(
-                        "unsupported response_mimetype set for function {}".format(
+                        "unsupported response_mime_type set for function {}".format(
                             self.callble.__name__
                         )
                     )
-                self.response_mimetype = c[1]
+                self.response_mime_type = c[1].lower()
 
             if c[0] == "request_content_type":
-                if not c[1] in dt.MIME_TYPE_REQ_MAPPER.keys():
+                if not c[1].lower() in dt.MIME_TYPE_REQ_MAPPER.keys():
                     raise de.UnsupportedMediaType(
                         "unsupported request_content_type set for function {}".format(
                             self.callble.__name__
                         )
                     )
-                self.request_content_type = c[1]
+                self.request_content_type = c[1].lower()
+
+            if c[0] == "request_method":
+                self.request_method = c[1].lower()
 
             if c[0] == "json_to_kwargs":
                 self.json_to_kwargs = True
