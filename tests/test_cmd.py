@@ -57,47 +57,47 @@ def test_serve(entrypoint, requirements, path, payload, deps):
     p.terminate()
 
 
-# @pytest.mark.parametrize(
-#     "deps, location, should_err",
-#     [
-#         ("req1.txt", ".", True),
-#         ("requirements.txt", ".", False),
-#         ("../deps_tests/requirements.txt", ".", False),  # relative location
-#         ("setup.py", "my_pkg", False),
-#         ("setup.py", "doesnt_exist", True),
-#         ("my_pkg/setup.py", ".", False),
-#         ("setup_not_supported.py", ".", True),
-#     ],
-# )
-# def test_install_deps(deps, location, should_err):
-#     rnr = CliRunner()
-#     pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
-#     res = rnr.invoke(
-#         dc.cli, ["install-deps", "-d", deps, "-l", pth], catch_exceptions=True
-#     )
+@pytest.mark.parametrize(
+    "deps, location, should_err",
+    [
+        ("req1.txt", ".", True),
+        ("requirements.txt", ".", False),
+        ("../deps_tests/requirements.txt", ".", False),  # relative location
+        ("setup.py", "my_pkg", False),
+        ("setup.py", "doesnt_exist", True),
+        ("my_pkg/setup.py", ".", False),
+        ("setup_not_supported.py", ".", True),
+    ],
+)
+def test_install_deps(deps, location, should_err):
+    rnr = CliRunner()
+    pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
+    res = rnr.invoke(
+        dc.cli, ["install-deps", "-d", deps, "-l", pth], catch_exceptions=True
+    )
 
-#     print(989, res.output, res.exit_code)
-#     if should_err:
-#         assert res.exit_code > 0
-#     else:
-#         assert res.exit_code == 0
+    print(989, res.output, res.exit_code)
+    if should_err:
+        assert res.exit_code > 0
+    else:
+        assert res.exit_code == 0
 
 
-# @pytest.mark.parametrize(
-#     "deps, location, should_err",
-#     [
-#         ("req1.txt", ".", True),
-#         ("requirements.txt", ".", False),
-#         ("../deps_tests/requirements.txt", ".", False),  # relative location
-#         ("setup.py", "my_pkg", False),
-#         ("setup.py", "doesnt_exist", True),
-#         ("my_pkg/setup.py", ".", False),
-#         ("setup_not_supported.py", ".", True),
-#     ],
-# )
-# def test___deps(deps, location, should_err):
-#     pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
-#     try:
-#         dc._deps(deps, pth)
-#     except:
-#         assert should_err
+@pytest.mark.parametrize(
+    "deps, location, should_err",
+    [
+        ("req1.txt", ".", True),
+        ("requirements.txt", ".", False),
+        ("../deps_tests/requirements.txt", ".", False),  # relative location
+        ("setup.py", "my_pkg", False),
+        ("setup.py", "doesnt_exist", True),
+        ("my_pkg/setup.py", ".", False),
+        ("setup_not_supported.py", ".", True),
+    ],
+)
+def test___deps(deps, location, should_err):
+    pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
+    try:
+        dc._deps(deps, pth)
+    except:
+        assert should_err
