@@ -45,8 +45,14 @@ def cli() -> None:
     help="Use Waitress as a WSGI server, defaults to True,"
     + " else launches a Flask debug server.",
 )
+@click.option(
+    "-h", "--host", help="Host to serve on, defaults to '0.0.0.0'", default="0.0.0.0"
+)
+@click.option(
+    "-p", "--port", help="Port to serve on, defaults to '8080'", default=8080, type=int
+)
 def serve(
-    entrypoint: str, location: str, deps: str, wsgi: bool, test=False
+    entrypoint: str, location: str, deps: str, wsgi: bool, host: str, port: int
 ) -> typing.Any:
     """CLI serve."""
     if deps:
