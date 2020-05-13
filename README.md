@@ -6,7 +6,7 @@
 ![workflow](https://github.com/dploy-ai/dploy-kickstart/workflows/kickstart/badge.svg)
 [![codecov](https://codecov.io/gh/dploy-ai/dploy-kickstart/branch/master/graph/badge.svg?token=KypiVRoPJz)](https://codecov.io/gh/dploy-ai/dploy-kickstart)
 
-Expose your Python functions via an HTTP API.
+Expose your Python functions via an HTTP API. `dploy-kickstart` is designed with a focus of making deployment of machine learning models as easy as possible with as clean of a contract as possible. This means that you will find configurations options that are less relevant outside of this domain.
 
 ### Installation
 
