@@ -17,6 +17,7 @@ from click.testing import CliRunner
 import dploy_kickstart.cmd as dc
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+OWD = os.getcwd()
 
 
 @pytest.mark.parametrize(
@@ -57,44 +58,43 @@ def test_serve(entrypoint, requirements, path, payload, deps):
     p.terminate()
 
 
-@pytest.mark.parametrize(
-    "deps, location, should_err",
-    [
-        ("req1.txt", ".", True),
-        ("requirements.txt", ".", False),
-        ("../deps_tests/requirements.txt", ".", False),  # relative location
-        ("setup.py", "my_pkg", False),
-        ("setup.py", "doesnt_exist", True),
-        ("my_pkg/setup.py", ".", False),
-        ("setup_not_supported.py", ".", True),
-    ],
-)
+DEPS_CASES = [
+    ("req1.txt", ".", True),
+    ("requirements.txt", ".", False),
+    ("../deps_tests/requirements.txt", ".", False),  # relative location
+    ("setup.py", "my_pkg", False),
+    ("setup.py", "doesnt_exist", True),
+    ("my_pkg/setup.py", ".", False),
+    ("setup_not_supported.py", ".", True),
+]
+
+
+@pytest.mark.parametrize("deps, location, should_err", DEPS_CASES)
 def test_install_deps(deps, location, should_err):
     rnr = CliRunner()
     pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
-    res = rnr.invoke(
-        dc.cli, ["install-deps", "-d", deps, "-l", pth], catch_exceptions=True
-    )
+    res = rnr.invoke(dc.cli, ["install-deps", "-d", deps, "-l", pth])
 
-    print(989, res.output, res.exit_code)
     if should_err:
         assert res.exit_code > 0
     else:
         assert res.exit_code == 0
 
 
-@pytest.mark.parametrize(
-    "deps, location, should_err",
-    [
-        ("req1.txt", ".", True),
-        ("requirements.txt", ".", False),
-        ("../deps_tests/requirements.txt", ".", False),  # relative location
-        ("setup.py", "my_pkg", False),
-        ("setup.py", "doesnt_exist", True),
-        ("my_pkg/setup.py", ".", False),
-        ("setup_not_supported.py", ".", True),
-    ],
-)
+@pytest.mark.parametrize("deps, location, should_err", DEPS_CASES)
+def test_install_deps_rel(deps, location, should_err):
+    ## test relative locations
+    rnr = CliRunner()
+    rel_pth = os.path.join(OWD, "./tests/", "assets/deps_tests", location)
+    res = rnr.invoke(dc.cli, ["install-deps", "-d", deps, "-l", rel_pth])
+
+    if should_err:
+        assert res.exit_code > 0
+    else:
+        assert res.exit_code == 0
+
+
+@pytest.mark.parametrize("deps, location, should_err", DEPS_CASES)
 def test___deps(deps, location, should_err):
     pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
     try:

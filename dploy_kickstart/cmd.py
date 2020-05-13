@@ -96,9 +96,9 @@ def _deps(deps: str, location: str) -> None:
     """Install deps."""
     for r in deps.split(","):
         if r.endswith("requirements.txt"):
-            pd.install_requirements_txt(os.path.join(location, r))
+            pd.install_requirements_txt(os.path.abspath(os.path.join(location, r)))
         elif r.endswith("setup.py"):
-            pd.install_setup_py(os.path.join(location, r))
+            pd.install_setup_py(os.path.abspath(os.path.join(location, r)))
         else:
             raise Exception(
                 "unsupported dependency install defined: {}. "
