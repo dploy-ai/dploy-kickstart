@@ -5,6 +5,7 @@ description = "Expose your functions as HTTP endpoints."
 authors = ["Bart Smeets <bart@dploy.ai>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/dploy-ai/dploy-kickstart/"
 
 [tool.poetry.scripts]
 kickstart = 'dploy_kickstart.cmd:cli'
