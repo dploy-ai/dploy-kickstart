@@ -20,23 +20,34 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.mark.parametrize(
-    "entrypoint, requirements, path, payload",
+    "entrypoint, requirements, path, payload, deps",
     [
-        ("check_mimetypes.py", None, "/xyz/", '{"a": 1, "b": 2, "c": 3}'),
-        ("server_t1.py", None, "/predict/", '{"val": 1}'),
+        ("check_mimetypes.py", None, "/xyz/", '{"a": 1, "b": 2, "c": 3}', None),
+        (
+            "server_t1.py",
+            None,
+            "/predict/",
+            '{"val": 1}',
+            "deps_tests/requirements.txt",
+        ),
     ],
 )
-def test_serve(entrypoint, requirements, path, payload):
+def test_serve(entrypoint, requirements, path, payload, deps):
     pth = os.path.join(THIS_DIR, "assets")
 
     def background():
         runner = CliRunner()
-        runner.invoke(dc.serve, ["-e", entrypoint, "-l", pth])
+        args = ["-e", entrypoint, "-l", pth]
+
+        if deps:
+            args = args + ["-d", deps]
+
+        runner.invoke(dc.serve, args)
 
     p = Process(target=background)
     p.start()
     atexit.register(p.terminate)  # in case we err somewhere
-    time.sleep(1)
+    time.sleep(5)
     r = requests.post(
         "http://localhost:8080{}".format(path),
         data=payload,
@@ -44,3 +55,49 @@ def test_serve(entrypoint, requirements, path, payload):
     )
     assert r.status_code == 200
     p.terminate()
+
+
+@pytest.mark.parametrize(
+    "deps, location, should_err",
+    [
+        ("req1.txt", ".", True),
+        ("requirements.txt", ".", False),
+        ("../deps_tests/requirements.txt", ".", False),  # relative location
+        ("setup.py", "my_pkg", False),
+        ("setup.py", "doesnt_exist", True),
+        ("my_pkg/setup.py", ".", False),
+        ("setup_not_supported.py", ".", True),
+    ],
+)
+def test_install_deps(deps, location, should_err):
+    rnr = CliRunner()
+    pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
+    res = rnr.invoke(
+        dc.cli, ["install-deps", "-d", deps, "-l", pth], catch_exceptions=True
+    )
+
+    print(989, res.output, res.exit_code)
+    if should_err:
+        assert res.exit_code > 0
+    else:
+        assert res.exit_code == 0
+
+
+@pytest.mark.parametrize(
+    "deps, location, should_err",
+    [
+        ("req1.txt", ".", True),
+        ("requirements.txt", ".", False),
+        ("../deps_tests/requirements.txt", ".", False),  # relative location
+        ("setup.py", "my_pkg", False),
+        ("setup.py", "doesnt_exist", True),
+        ("my_pkg/setup.py", ".", False),
+        ("setup_not_supported.py", ".", True),
+    ],
+)
+def test___deps(deps, location, should_err):
+    pth = os.path.join(THIS_DIR, "assets/deps_tests", location)
+    try:
+        dc._deps(deps, pth)
+    except:
+        assert should_err

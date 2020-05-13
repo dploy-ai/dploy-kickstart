@@ -8,7 +8,8 @@ PY_VERSION = str(sys.version_info.major) + "." + str(sys.version_info.minor)
 
 
 @pytest.mark.parametrize(
-    "req_file, error_expected", [("req1.txt", False), ("non_existing.txt", True),]
+    "req_file, error_expected",
+    [("req1.txt", True), ("non_existing.txt", True), ("requirements.txt", False),],
 )
 def test_req_install(req_file, error_expected):
     p = os.path.join(THIS_DIR, "assets", "deps_tests")

@@ -51,7 +51,7 @@ def serve(
     """CLI serve."""
     if deps:
         click.echo("Installing deps: {}".format(deps))
-        deps(deps, location)
+        _deps(deps, location)
 
     app = ps.generate_app()
     app = ps.append_entrypoint(app, entrypoint, os.path.abspath(location))
@@ -81,19 +81,20 @@ def serve(
 @click.option(
     "-l",
     "--location",
-    required=True,
+    default=".",
+    required=False,
     help="location of the script or notebook (and that will "
-    + "be used as execution context)",
+    + "be used as execution context). Will default to '.'",
 )
-def install_deps(reqs: str, location: str) -> None:
+def install_deps(deps: str, location: str) -> None:
     """CLI install dependencies."""
-    click.echo("Installing reqs: {}".format(reqs))
-    deps(reqs, location)
+    click.echo("Installing deps: {}".format(deps))
+    _deps(deps, location)
 
 
-def deps(reqs: str, location: str) -> None:
+def _deps(deps: str, location: str) -> None:
     """Install deps."""
-    for r in reqs.split(","):
+    for r in deps.split(","):
         if r.endswith("requirements.txt"):
             pd.install_requirements_txt(os.path.join(location, r))
         elif r.endswith("setup.py"):
