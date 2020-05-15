@@ -57,8 +57,16 @@ class AnnotatedCallable:
         """Evaluate comments and act accordingly."""
         for c in self.comment_args:
             if c[0] == "endpoint":
+                if len(c) > 1:
+                    p = f"/{c[1]}/"
+                else:
+                    p = "/"
+
+                # clean up path
+                p = p.replace("//", "/")
+
                 self.endpoint = True
-                self.endpoint_path = f"/{c[1]}/"
+                self.endpoint_path = p
 
             if c[0] == "response_mime_type":
                 if not c[1].lower() in dt.MIME_TYPE_RES_MAPPER.keys():
