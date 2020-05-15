@@ -37,6 +37,12 @@ def t5():
 def t6():
     return t1()
 
+# root path / endpoint
+# @dploy endpoint
+def t7():
+    return t1()
+
+
 
 @pytest.mark.parametrize(
     "callable,endpoint,endpoint_path,has_args,output, error",
@@ -47,6 +53,7 @@ def t6():
         (t4, True, "/blaaa/", True, 2, True),
         (t5, True, "/xyz/", True, 1, False),
         (t6, True, "/with_slashes/", True, 1, False),
+        (t7, True, "/", True, 1, False),
     ],
 )
 def test_callable_annotation(
