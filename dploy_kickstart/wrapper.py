@@ -24,9 +24,9 @@ def nb_to_py(nb_file: str, location: str) -> str:
         import nbformat
         import nbconvert
     except ImportError as e:
-        raise Exception(
-            "Cannot import nbformat/nbconvert, was it added "
-            "to the dependencies?\n{}".format(e)
+        raise pe.ScriptImportError(
+            "{}\nCannot import notebook conversion libraries. Please add ",
+            "`jupyter` (or `nbformat` and `nbconvert`) to your dependencies.".format(e),
         )
 
     handle, filename = tempfile.mkstemp(text=True, suffix=".py")
