@@ -25,8 +25,9 @@ def nb_to_py(nb_file: str, location: str) -> str:
         import nbconvert
     except ImportError as e:
         raise pe.ScriptImportError(
-            "{}\nCannot import notebook conversion libraries. Please add ",
-            "`jupyter` (or `nbformat` and `nbconvert`) to your dependencies.".format(e),
+            f"{e}\nCannot import notebook conversion libraries."
+            + "Please add `jupyter` (or `nbformat` and `nbconvert`)"
+            + " to your dependencies.",
         )
 
     handle, filename = tempfile.mkstemp(text=True, suffix=".py")
@@ -79,7 +80,7 @@ def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
     elif ext == ".py":
         pass
     else:
-        log.error("unsupportered entrypoint: {}".format(entrypoint))
+        log.error(f"unsupportered entrypoint: {entrypoint}")
         raise pe.UnsupportedEntrypoint(entrypoint)
 
     mod_file, _ = os.path.splitext(entrypoint)
@@ -92,7 +93,7 @@ def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
     try:
         mod = importlib.import_module(mod_file, location)
     except Exception as e:
-        raise pe.ScriptImportError("{}: {}".format(msg, e))
+        raise pe.ScriptImportError(f"{msg}: {e}")
 
     return mod
 
@@ -114,7 +115,7 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
             res = pt.MIME_TYPE_REQ_MAPPER[f.response_mime_type](f, request)
         except Exception:
             raise pe.UserApplicationError(
-                message="error in executing '{}'".format(f.__name__),
+                message=f"error in executing '{f.__name__}'",
                 traceback=traceback.format_exc(),
             )
 

@@ -50,7 +50,7 @@ def test_serve(entrypoint, requirements, path, payload, deps):
     atexit.register(p.terminate)  # in case we err somewhere
     time.sleep(5)
     r = requests.post(
-        "http://localhost:8080{}".format(path),
+        f"http://localhost:8080{path}",
         data=payload,
         headers={"content-type": "application/json"},
     )

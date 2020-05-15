@@ -27,9 +27,7 @@ def append_entrypoint(
     for f in fm:
         if f.endpoint:
             log.debug(
-                "adding endpoint for func: {} (func_args: {})".format(
-                    f.__name__, f.comment_args
-                )
+                f"adding endpoint for func: {f.__name__} (func_args: {f.comment_args})"
             )
 
             app.add_url_rule(

@@ -58,7 +58,7 @@ class AnnotatedCallable:
         for c in self.comment_args:
             if c[0] == "endpoint":
                 self.endpoint = True
-                self.endpoint_path = "/{}/".format(c[1])
+                self.endpoint_path = f"/{c[1]}/"
 
             if c[0] == "response_mime_type":
                 if not c[1].lower() in dt.MIME_TYPE_RES_MAPPER.keys():

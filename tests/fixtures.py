@@ -7,5 +7,5 @@ OWD = os.getcwd()
 @pytest.fixture(scope="session")
 def restore_wd():
     yield os.getcwd()
-    print("restoring workingdir {}".format(OWD))
+    print(f"restoring workingdir {OWD}")
     os.chdir(OWD)

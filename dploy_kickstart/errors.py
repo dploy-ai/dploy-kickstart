@@ -23,7 +23,7 @@ class UnsupportedEntrypoint(ServerException):
 
     def __init__(self, entrypoint: str):
         super().__init__(self)
-        self.message = "entrypoint '{}' not supported".format(entrypoint)
+        self.message = f"entrypoint '{entrypoint}' not supported"
 
     def to_dict(self) -> dict:
         return dict(message=self.message)

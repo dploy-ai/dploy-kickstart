@@ -56,7 +56,7 @@ def serve(
 ) -> typing.Any:
     """CLI serve."""
     if deps:
-        click.echo("Installing deps: {}".format(deps))
+        click.echo(f"Installing deps: {deps}")
         _deps(deps, location)
 
     app = ps.generate_app()
@@ -94,7 +94,7 @@ def serve(
 )
 def install_deps(deps: str, location: str) -> None:
     """CLI install dependencies."""
-    click.echo("Installing deps: {}".format(deps))
+    click.echo(f"Installing deps: {deps}")
     _deps(deps, location)
 
 

@@ -24,12 +24,10 @@ def install_requirements_txt(requirements_txt_location: str) -> None:
     # need to do sys call
     if not requirements_txt_location.endswith("requirements.txt"):
         raise RequirementsInstallException(
-            "{} - should contain a requirements.txt reference".format(
-                requirements_txt_location
-            )
+            f"{requirements_txt_location} - should contain a requirements.txt reference"
         )
 
-    cmd = "{} -m pip install -r {}".format(sys.executable, requirements_txt_location)
+    cmd = f"{sys.executable} -m pip install -r {requirements_txt_location}"
     print("##")
     print(cmd)
     c = execute_cmd(cmd)
@@ -43,12 +41,12 @@ def install_setup_py(setup_py_location: str) -> None:
     # need to do sys call
     if not setup_py_location.endswith("setup.py"):
         raise SetupPyInstallException(
-            "{} - should contain a setup.py reference".format(setup_py_location)
+            f"{setup_py_location} - should contain a setup.py reference"
         )
 
     setup_py_dir_location = os.path.dirname(setup_py_location)
 
-    cmd = "{} -m pip install {}".format(sys.executable, setup_py_dir_location)
+    cmd = f"{sys.executable} -m pip install {setup_py_dir_location}"
 
     c = execute_cmd(cmd)
     if c != 0:
@@ -65,4 +63,4 @@ def execute_cmd(cmd: str, wd: str = None) -> int:
     # output, error = p.communicate()
     return p.returncode
     if p.returncode != 0:
-        raise Exception("cmd '{}' statuscode: {}".format(cmd, p.returncode))
+        raise Exception(f"cmd '{cmd}' statuscode: {p.returncode}")
