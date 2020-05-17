@@ -17,7 +17,7 @@ When installed it provides a `kickstart` executable. Have a look at the help fun
 
 ### Usage
 
-`dploy_kickstart` is a helper utility that can expose your Python functions as HTTP endpoints. Based on comment annotations it wraps your chosen functions to be served as API endpoints.
+`dploy_kickstart` is a helper utility that can expose your Python functions as HTTP endpoints. Based on comment annotations it wraps your chosen functions to be served as API endpoints. It is meant to be used via the `kickstart` CLI, hence, it would generally not be used programmatically.
 
 Let's say you have a `script.py` with `@dploy` comment annotations:
 
@@ -88,3 +88,7 @@ paste 3.4.0 Tools for using a Web Server Gateway Interface stack
 └── six >=1.4.0
 waitress 1.4.3 Waitress WSGI server
 ```
+
+### Package naming
+
+Isn't using underscores in package names discouraged? The reasoning behind the `dploy_kickstart` naming is that this utility is not meant to be used programmatically. Its meant to be used as a sidecar to user code that should be unaware of its existence, therefore, a longer name has a lower chance of clashing with user code. Yes, this is quite subjective.
