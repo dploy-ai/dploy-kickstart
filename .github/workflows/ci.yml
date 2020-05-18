@@ -1,4 +1,4 @@
-name: kickstart
+name: tests
 on: [push]
 
 jobs:

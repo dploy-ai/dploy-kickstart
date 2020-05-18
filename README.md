@@ -3,7 +3,7 @@
 [![maintained](https://img.shields.io/badge/maintained%20by-dploy.ai-brightgreen.svg)](https://dploy.ai/) 
 [![PyPI version](https://badge.fury.io/py/dploy-kickstart.svg)](https://badge.fury.io/py/dploy-kickstart)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dploy-kickstart)
-![workflow](https://github.com/dploy-ai/dploy-kickstart/workflows/kickstart/badge.svg)
+![workflow](https://github.com/dploy-ai/dploy-kickstart/workflows/tests/badge.svg)
 [![codecov](https://codecov.io/gh/dploy-ai/dploy-kickstart/branch/master/graph/badge.svg?token=KypiVRoPJz)](https://codecov.io/gh/dploy-ai/dploy-kickstart)
 
 Expose your Python functions via an HTTP API. `dploy-kickstart` is designed with a focus of making deployment of machine learning models as easy as possible with as clean of a contract as possible. This means that you will find configurations options that are less relevant outside of this domain.
