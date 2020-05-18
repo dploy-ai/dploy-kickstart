@@ -92,3 +92,7 @@ waitress 1.4.3 Waitress WSGI server
 ### Package naming
 
 Isn't using underscores in package names discouraged? The reasoning behind the `dploy_kickstart` naming is that this utility is not meant to be used programmatically. Its meant to be used as a sidecar to user code that should be unaware of its existence, therefore, a longer name has a lower chance of clashing with user code. Yes, this is quite subjective.
+
+### Contributing
+
+Questions, ideas, suggestions? Feel free to create issue or PR.
