@@ -94,14 +94,16 @@ def serve(
 )
 def install_deps(deps: str, location: str) -> None:
     """CLI install dependencies."""
-    click.echo(f"Installing deps: {deps}")
+    click.echo(f"Installing deps... {deps}")
     _deps(deps, location)
 
 
 def _deps(deps: str, location: str) -> None:
     """Install deps."""
     for r in deps.split(","):
-        if r.endswith("requirements.txt"):
+        if not r:
+            pass  # to allow to pass empty string when use in templated manner
+        elif r.endswith("requirements.txt"):
             pd.install_requirements_txt(os.path.abspath(os.path.join(location, r)))
         elif r.endswith("setup.py"):
             pd.install_setup_py(os.path.abspath(os.path.join(location, r)))
