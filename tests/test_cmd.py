@@ -60,6 +60,7 @@ def test_serve(entrypoint, requirements, path, payload, deps):
 
 DEPS_CASES = [
     ("req1.txt", ".", True),
+    ("", ".", False),
     ("requirements.txt", ".", False),
     ("../deps_tests/requirements.txt", ".", False),  # relative location
     ("setup.py", "my_pkg", False),
