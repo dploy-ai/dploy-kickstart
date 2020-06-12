@@ -35,13 +35,14 @@ def append_entrypoint(
                 f.endpoint_path,
                 pw.func_wrapper(f),
                 methods=[f.request_method.upper()],
+                strict_slashes=False
             )
 
             # add info about endpoint to api spec
             po.path_spec(openapi_spec, f)
 
     app.add_url_rule(
-        "/openapi.yaml", "/openapi.yaml", openapi_spec.to_yaml, methods=["GET"]
+        "/openapi.yaml", "/openapi.yaml", openapi_spec.to_yaml, methods=["GET"],
     )
 
     return app
