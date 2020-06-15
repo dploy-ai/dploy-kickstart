@@ -8,11 +8,8 @@ import tempfile
 import atexit
 import functools
 import typing
-import traceback
 
-from flask import request
 import dploy_kickstart.errors as pe
-import dploy_kickstart.transformers as pt
 import dploy_kickstart.annotations as pa
 
 log = logging.getLogger(__name__)
@@ -96,32 +93,3 @@ def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
         raise pe.ScriptImportError(f"{msg}: {e}")
 
     return mod
-
-
-def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
-    """Wrap functions with request logic."""
-
-    def exposed_func() -> typing.Callable:
-        # some sanity checking
-        if request.content_type.lower() != f.request_content_type:
-            raise pe.UnsupportedMediaType(
-                "Please provide a valid 'Content-Type' header, valid: {}".format(
-                    f.request_content_type
-                )
-            )
-
-        # preprocess input for callable
-        try:
-            res = pt.MIME_TYPE_REQ_MAPPER[f.response_mime_type](f, request)
-        except Exception:
-            raise pe.UserApplicationError(
-                message=f"error in executing '{f.__name__}'",
-                traceback=traceback.format_exc(),
-            )
-
-        # determine whether or not to process response before sending it back to caller
-        wrapped_res = pt.MIME_TYPE_RES_MAPPER[request.content_type](res)
-
-        return wrapped_res
-
-    return exposed_func

@@ -3,9 +3,13 @@
 import inspect
 import typing
 import re
+import traceback
+from flask import request
 
 import dploy_kickstart.transformers as dt
 import dploy_kickstart.errors as de
+
+HEADER_MODEL_REPORT = "X-Dployai-Model-Report"
 
 
 class AnnotatedCallable:
@@ -26,6 +30,8 @@ class AnnotatedCallable:
         self.response_mime_type = "application/json"
         self.request_content_type = "application/json"
         self.json_to_kwargs = False
+        self.report_return_value = False
+        self.custom_headers = dict()
 
         if not callable(callble):
             raise Exception("Trying to parse annotations on non-callable object")
@@ -92,6 +98,9 @@ class AnnotatedCallable:
             if c[0] == "json_to_kwargs":
                 self.json_to_kwargs = True
 
+            if c[0] == "report_return_value":
+                self.report_return_value = True
+
     def has_args(self) -> bool:
         """Return if callable has comment annotation arguments."""
         return len(self.comment_args) > 0
@@ -99,6 +108,51 @@ class AnnotatedCallable:
     def __call__(self, *args, **kwargs) -> typing.Any:
         """Allow calling of original callable."""
         return self.callble(*args, **kwargs)
+
+    def http_call(self, request_transformers, response_transformers) -> typing.Callable:
+        """Allow calling in context of a Flask request."""
+
+        def f() -> typing.Any:
+            # some sanity checking
+            if request.content_type.lower() != self.request_content_type:
+                raise de.UnsupportedMediaType(
+                    "Function doesn't provide support"
+                    " for 'Content-Type' {}, supported: {}".format(
+                        request.content_type.lower(), self.request_content_type
+                    )
+                )
+
+            # preprocess input for callable
+            try:
+                res = request_transformers[self.request_content_type](self, request)
+            except Exception:
+                raise de.UserApplicationError(
+                    message=f"error in executing '{self.__name__}'",
+                    traceback=traceback.format_exc(),
+                )
+
+            # determine whether or not to process
+            # response before sending it back to caller
+            # resp should be a flask Response object
+            resp = response_transformers[self.response_mime_type](res)
+
+            if self.report_return_value:
+                if "application/json" not in self.response_mime_type:
+                    raise de.UserApplicationError(
+                        message=f"requesting reporting of return value but"
+                        " not using json response mimetype (requirements)"
+                    )
+
+                self.custom_headers[HEADER_MODEL_REPORT] = (
+                    resp.get_data(as_text=True).replace("\r", "").replace("\n", "")
+                )
+                resp.headers[HEADER_MODEL_REPORT] = self.custom_headers[
+                    HEADER_MODEL_REPORT
+                ]
+
+            return resp
+
+        return f
 
     def __name__(self) -> str:
         """Return name of original callable."""

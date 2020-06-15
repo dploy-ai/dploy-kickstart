@@ -8,6 +8,7 @@ from flask import Flask, jsonify
 import dploy_kickstart.wrapper as pw
 import dploy_kickstart.errors as pe
 import dploy_kickstart.openapi as po
+import dploy_kickstart.transformers as pt
 
 log = logging.getLogger(__name__)
 
@@ -33,9 +34,9 @@ def append_entrypoint(
             app.add_url_rule(
                 f.endpoint_path,
                 f.endpoint_path,
-                pw.func_wrapper(f),
+                f.http_call(pt.MIME_TYPE_REQ_MAPPER, pt.MIME_TYPE_RES_MAPPER),
                 methods=[f.request_method.upper()],
-                strict_slashes=False
+                strict_slashes=False,
             )
 
             # add info about endpoint to api spec

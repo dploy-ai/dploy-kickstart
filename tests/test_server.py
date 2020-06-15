@@ -31,7 +31,7 @@ def test_client():
         (
             "server_t1.py",
             "post",
-            "/predict", # test without trailing slash
+            "/predict",  # test without trailing slash
             {"val": 1},
             1,
             "application/json",
