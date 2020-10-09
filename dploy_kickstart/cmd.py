@@ -15,10 +15,11 @@ from dploy_kickstart import server as ps
 
 log = logging.getLogger(__name__)
 
-# waitress waits for a KeyboardInterrupt in order to shutdown gracefully
+
 def handle_sigterm(*args):
     click.echo("Received SIGTERM")
     raise KeyboardInterrupt()
+
 
 @click.group()
 def cli() -> None:
