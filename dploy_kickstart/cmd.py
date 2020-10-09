@@ -3,6 +3,7 @@
 import os
 import logging
 import typing
+import signal
 
 import click
 from waitress import serve as waitress_serve
@@ -14,6 +15,10 @@ from dploy_kickstart import server as ps
 
 log = logging.getLogger(__name__)
 
+# waitress waits for a KeyboardInterrupt in order to shutdown gracefully
+def handle_sigterm(*args):
+    click.echo("Received SIGTERM")
+    raise KeyboardInterrupt()
 
 @click.group()
 def cli() -> None:
@@ -58,6 +63,8 @@ def serve(
     if deps:
         click.echo(f"Installing deps: {deps}")
         _deps(deps, location)
+
+    signal.signal(signal.SIGTERM, handle_sigterm)
 
     app = ps.generate_app()
     app = ps.append_entrypoint(app, entrypoint, os.path.abspath(location))
