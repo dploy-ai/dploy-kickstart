@@ -3,8 +3,13 @@
 
 
 class ServerException(Exception):
+    status_code = 500
+
     def __init__(self, *args, **kwargs):
         super().__init__(self, *args, **kwargs)
+
+    def to_dict(self) -> dict:
+        pass
 
 
 class ScriptImportError(ServerException):
