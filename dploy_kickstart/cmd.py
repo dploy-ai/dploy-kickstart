@@ -42,7 +42,7 @@ def cli() -> None:
     "-d",
     "--deps",
     help="install dependencies; comma separated paths to either requirements.txt "
-    + "or setup.py files. note that this can be run seperately via the "
+    + "or setup.py files. note that this can be run separately via the "
     + "'install-deps' command",
 )
 @click.option(
