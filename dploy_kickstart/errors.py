@@ -3,7 +3,7 @@
 
 
 class ServerException(Exception):
-    status_code = 500
+    status_code = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(self, *args, **kwargs)
