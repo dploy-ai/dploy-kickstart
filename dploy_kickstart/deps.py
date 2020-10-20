@@ -28,9 +28,9 @@ def install_requirements_txt(requirements_txt_location: str) -> None:
         )
 
     cmd = f"{sys.executable} -m pip install -r {requirements_txt_location}"
-    print("##")
-    print(cmd)
-    c = execute_cmd(cmd)
+    wd = os.path.dirname(requirements_txt_location)
+    c = execute_cmd(cmd, wd=wd)
+
     if c != 0:
         raise RequirementsInstallException(requirements_txt_location)
 

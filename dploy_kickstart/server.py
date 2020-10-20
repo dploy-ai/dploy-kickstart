@@ -35,7 +35,7 @@ def append_entrypoint(
                 f.endpoint_path,
                 pw.func_wrapper(f),
                 methods=[f.request_method.upper()],
-                strict_slashes=False
+                strict_slashes=False,
             )
 
             # add info about endpoint to api spec

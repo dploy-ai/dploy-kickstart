@@ -37,11 +37,11 @@ def t5():
 def t6():
     return t1()
 
+
 # root path / endpoint
 # @dploy endpoint
 def t7():
     return t1()
-
 
 
 @pytest.mark.parametrize(

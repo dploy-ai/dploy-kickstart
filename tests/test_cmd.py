@@ -82,6 +82,25 @@ def test_install_deps(deps, location, should_err):
         assert res.exit_code == 0
 
 
+@pytest.mark.parametrize(
+    "deps, location, should_err",
+    [
+        ("requirements.txt", "assets/deps_tests", False),
+        ("requirements.txt", "assets/doesnt_exist", True),
+        ("doesnt_exist.txt", "assets/deps_tests", True),
+    ],
+)
+def test_install_deps_loc(deps, location, should_err):
+    rnr = CliRunner()
+    pth = os.path.join(THIS_DIR, location)
+    res = rnr.invoke(dc.cli, ["install-deps", "-d", deps, "-l", pth])
+
+    if should_err:
+        assert res.exit_code > 0
+    else:
+        assert res.exit_code == 0
+
+
 @pytest.mark.parametrize("deps, location, should_err", DEPS_CASES)
 def test_install_deps_rel(deps, location, should_err):
     ## test relative locations
