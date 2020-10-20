@@ -1,6 +1,4 @@
 """Dependency installation logic."""
-
-
 import sys
 import os
 import subprocess
