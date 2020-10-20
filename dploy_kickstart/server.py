@@ -63,4 +63,5 @@ def generate_app() -> typing.Generic:
         log.error(response_dict)
         response.status_code = error.status_code
         return response
+
     return app
