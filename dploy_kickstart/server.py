@@ -57,9 +57,10 @@ def generate_app() -> typing.Generic:
         return "healthy", 200
 
     @app.errorhandler(pe.ServerException)
-    def handle_server_exception(error: Exception) -> None:
-        response = jsonify(error.to_dict())
+    def handle_server_exception(error: pe.ServerException) -> None:
+        response_dict = error.to_dict()
+        response = jsonify(response_dict)
+        log.error(response_dict)
         response.status_code = error.status_code
         return response
-
     return app
