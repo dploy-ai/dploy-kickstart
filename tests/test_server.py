@@ -203,12 +203,12 @@ def test_server_logs(
     app = ps.generate_app()
     app = ps.append_entrypoint(app, entrypoint, p)
     app.logger.addHandler(handler)
-    test_client = app.test_client()
-    _ = getattr(test_client, method)(
+    t_client = app.test_client()
+    _ = getattr(t_client, method)(
         path, json=payload, headers={"Accept": accept, "Content-Type": content_type}
     )
     str_log_stream = stream.getvalue()
-    print(str_log_stream)
+
     try:
         assert re.match(str_pattern, str_log_stream)
     except AssertionError:
