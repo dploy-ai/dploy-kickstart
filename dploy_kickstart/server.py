@@ -1,6 +1,7 @@
 """Flask server logic."""
 
 import logging
+import typing
 
 from flask import Flask, jsonify
 
@@ -49,8 +50,8 @@ def generate_app() -> Flask:
     """Generate a Flask app."""
     app = Flask(__name__)
 
-    @app.route("/healthz/", methods=["GET"])
-    def health_check() -> None:
+    @app.route("/healthz/", methods=["GET"], strict_slashes=False)
+    def health_check() -> typing.Tuple[str, int]:
         return "healthy", 200
 
     @app.errorhandler(pe.ServerException)
