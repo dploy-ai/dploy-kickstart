@@ -61,7 +61,7 @@ def get_func_annotations(mod: typing.Generic) -> typing.Dict:
 
 
 def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
-    """Import entryoint from user code."""
+    """Import entrypoint from user code."""
     # assert if entrypoint contains a path prefix and if so add it to location
     if os.path.dirname(entrypoint) != "":
         location = os.path.join(location, os.path.dirname(entrypoint))

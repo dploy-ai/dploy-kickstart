@@ -35,7 +35,7 @@ class AnnotatedCallable:
         self.evaluate_comment_args()
 
     @staticmethod
-    def parse_comments(cs: str) -> None:
+    def parse_comments(cs: str) -> typing.List[str]:
         """Parse comments."""
         args = []
         if not cs:

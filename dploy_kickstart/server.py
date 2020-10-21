@@ -1,7 +1,6 @@
 """Flask server logic."""
 
 import logging
-import typing
 
 from flask import Flask, jsonify
 
@@ -12,9 +11,7 @@ import dploy_kickstart.openapi as po
 log = logging.getLogger(__name__)
 
 
-def append_entrypoint(
-    app: typing.Generic, entrypoint: str, location: str
-) -> typing.Generic:
+def append_entrypoint(app: Flask, entrypoint: str, location: str) -> Flask:
     """Add routes/functions defined in entrypoint."""
     mod = pw.import_entrypoint(entrypoint, location)
     fm = pw.get_func_annotations(mod)
@@ -48,7 +45,7 @@ def append_entrypoint(
     return app
 
 
-def generate_app() -> typing.Generic:
+def generate_app() -> Flask:
     """Generate a Flask app."""
     app = Flask(__name__)
 
