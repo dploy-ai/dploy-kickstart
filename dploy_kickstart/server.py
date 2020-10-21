@@ -12,9 +12,7 @@ import dploy_kickstart.openapi as po
 log = logging.getLogger(__name__)
 
 
-def append_entrypoint(
-    app: typing.Generic, entrypoint: str, location: str
-) -> typing.Generic:
+def append_entrypoint(app: Flask, entrypoint: str, location: str) -> Flask:
     """Add routes/functions defined in entrypoint."""
     mod = pw.import_entrypoint(entrypoint, location)
     fm = pw.get_func_annotations(mod)
@@ -48,17 +46,19 @@ def append_entrypoint(
     return app
 
 
-def generate_app() -> typing.Generic:
+def generate_app() -> Flask:
     """Generate a Flask app."""
     app = Flask(__name__)
 
-    @app.route("/healthz/", methods=["GET"])
-    def health_check() -> None:
+    @app.route("/healthz/", methods=["GET"], strict_slashes=False)
+    def health_check() -> typing.Tuple[str, int]:
         return "healthy", 200
 
     @app.errorhandler(pe.ServerException)
-    def handle_server_exception(error: Exception) -> None:
-        response = jsonify(error.to_dict())
+    def handle_server_exception(error: pe.ServerException) -> None:
+        response_dict = error.to_dict()
+        response = jsonify(response_dict)
+        log.error(response_dict)
         response.status_code = error.status_code
         return response
 

@@ -1,6 +1,4 @@
 """Dependency installation logic."""
-
-
 import sys
 import os
 import subprocess
@@ -56,7 +54,7 @@ def install_setup_py(setup_py_location: str) -> None:
 def execute_cmd(cmd: str, wd: str = None) -> int:
     """Execute a shell command."""
     # we call it like this because the normal exception
-    # subprocess.CalledProcessError doesnt return the stderr
+    # subprocess.CalledProcessError doesn't return the stderr
     # of the pip call itself (it just says it fails)
     # so we solve it with popen and pipe/capture the output
     p = subprocess.run(cmd, shell=True, cwd=wd)

@@ -1,7 +1,12 @@
 import os
 import logging
+import re
+
 import pytest
+
 import dploy_kickstart.server as ps
+from io import StringIO
+
 from .fixtures import restore_wd
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +20,7 @@ def test_client():
 
 
 @pytest.mark.parametrize(
-    "entrypoint,method,path,payload,response, accept, content_type, error, status_code",
+    "entrypoint, method, path, payload, response, accept, content_type, error, status_code",
     [
         (
             "server_t1.py",
@@ -100,7 +105,7 @@ def test_client():
     ],
 )
 @pytest.mark.usefixtures("restore_wd")
-def test_sever_generation(
+def test_server_generation(
     entrypoint,
     method,
     path,
@@ -142,3 +147,69 @@ def test_sever_generation(
         assert r.json == response
     else:
         assert r.data == response
+
+
+@pytest.mark.parametrize(
+    "entrypoint, method, path, payload, accept, content_type, str_pattern, error",
+    [
+        (
+                "server_t1.py",
+                "post",
+                "/predict/",
+                {"doesnt_exist": 1},
+                "application/json",
+                "application/json",
+                "(\{'message': \"error in executing)(.*)(KeyError:).*",
+                False
+        ),
+        # Raise different error
+        (
+                "server_t1.py",
+                "post",
+                "/predict/",
+                {"doesnt_exist": 1},
+                "application/json",
+                "application/json",
+                "(\{'message': \"error in executing)(.*)(TypeError:).*",
+                True
+        ),
+        # 200
+        (
+                "server_t1.py",
+                "post",
+                "/predict/",
+                {"val": 1},
+                "application/json",
+                "application/json",
+                "",
+                False
+        )
+    ],
+)
+@pytest.mark.usefixtures("restore_wd")
+def test_server_logs(
+        entrypoint,
+        method,
+        path,
+        payload,
+        accept,
+        content_type,
+        str_pattern,
+        error
+):
+    p = os.path.join(THIS_DIR, "assets")
+    stream = StringIO()
+    handler = logging.StreamHandler(stream)
+    app = ps.generate_app()
+    app = ps.append_entrypoint(app, entrypoint, p)
+    app.logger.addHandler(handler)
+    t_client = app.test_client()
+    _ = getattr(t_client, method)(
+        path, json=payload, headers={"Accept": accept, "Content-Type": content_type}
+    )
+    str_log_stream = stream.getvalue()
+
+    try:
+        assert re.match(str_pattern, str_log_stream)
+    except AssertionError:
+        assert error

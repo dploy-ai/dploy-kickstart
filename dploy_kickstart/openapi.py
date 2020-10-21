@@ -1,4 +1,4 @@
-"""Automagically generate APISpec."""
+"""Automatically generate APISpec."""
 
 from apispec import APISpec
 from dploy_kickstart.annotations import AnnotatedCallable
