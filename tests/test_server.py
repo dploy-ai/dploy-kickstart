@@ -11,6 +11,9 @@ from .fixtures import restore_wd
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=os.environ.get("LOGLEVEL", os.getenv("LOGLEVEL", "INFO")))
+PNG_IMG = open(os.path.join(THIS_DIR, 'assets', 'foo.png'), 'rb').read()
+JPEG_IMG = open(os.path.join(THIS_DIR, 'assets', 'cat.jpeg'), 'rb').read()
+JPG_IMG = open(os.path.join(THIS_DIR, 'assets', 'nature.jpg'), 'rb').read()
 
 
 def test_client():
@@ -22,6 +25,105 @@ def test_client():
 @pytest.mark.parametrize(
     "entrypoint, method, path, payload, response, accept, content_type, error, status_code",
     [
+        (
+            "server_img.py",
+            "post",
+            "/f1/",
+            JPEG_IMG,
+            b'{"message":"size=1280x960"}\n',
+            "application/json",
+            "image/jpeg",
+            False,
+            200,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f1/",
+            JPEG_IMG,
+            b'{"message":"size=1280x960"}\n',
+            "application/json",
+            "image/png",
+            True,
+            415,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f1/",
+            JPG_IMG,
+            b'{"message":"size=512x384"}\n',
+            "application/json",
+            "image/jpeg",
+            False,
+            200,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f2/",
+            PNG_IMG,
+            b'{"message":"image received. size=28x34"}\n',
+            "application/json",
+            "image/png",
+            False,
+            200,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f3/",
+            JPG_IMG,
+            JPG_IMG,
+            "image/jpeg",
+            "image/jpeg",
+            False,
+            200,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f3/",
+            JPEG_IMG,
+            JPEG_IMG,
+            "image/jpeg",
+            "image/jpeg",
+            False,
+            200,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f3/",
+            JPG_IMG,
+            JPG_IMG,
+            "image/jpeg",
+            "application/json",
+            True,
+            -1,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f4/",
+            PNG_IMG,
+            PNG_IMG,
+            "image/png",
+            "image/png",
+            False,
+            200,
+        ),
+        (
+            "server_img.py",
+            "post",
+            "/f4/",
+            PNG_IMG,
+            PNG_IMG,
+            "image/png",
+            "application/json",
+            True,
+            -1,
+        ),
         (
             "server_t1.py",
             "post",
@@ -126,16 +228,20 @@ def test_server_generation(
         assert error
         return
 
-    test_client = app.test_client()
-    if "json" in content_type:
-        r = getattr(test_client, method)(
-            path, json=payload, headers={"Accept": accept, "Content-Type": content_type}
-        )
+    t_client = app.test_client()
+    try:
+        if "json" in content_type:
+            r = getattr(t_client, method)(
+                path, json=payload, headers={"Accept": accept, "Content-Type": content_type}
+            )
 
-    else:
-        r = getattr(test_client, method)(
-            path, data=payload, headers={"Accept": accept, "Content-Type": content_type}
-        )
+        else:
+            r = getattr(t_client, method)(
+                path, data=payload, headers={"Accept": accept, "Content-Type": content_type}
+            )
+    except:
+        assert error
+        return
 
     assert r.status_code == status_code
 
