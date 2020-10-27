@@ -47,7 +47,7 @@ def nb_to_py(nb_file: str, location: str) -> str:
     return os.path.basename(filename), os.path.dirname(filename)
 
 
-def get_func_annotations(mod: typing.Generic) -> typing.Dict:
+def get_func_annotations(mod: typing.Generic) -> typing.List[pa.AnnotatedCallable]:
     """Scan usercode for function annotations."""
     cm = []
     # check which functions have relevant args and return 'em
@@ -56,7 +56,6 @@ def get_func_annotations(mod: typing.Generic) -> typing.Dict:
             ac = pa.AnnotatedCallable(val)
             if ac.has_args():
                 cm.append(ac)
-
     return cm
 
 
@@ -112,7 +111,7 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
 
         # preprocess input for callable
         try:
-            res = pt.MIME_TYPE_REQ_MAPPER[f.response_mime_type](f, request)
+            res = pt.MIME_TYPE_REQ_MAPPER[f.request_content_type](f, request)
         except Exception:
             raise pe.UserApplicationError(
                 message=f"error in executing '{f.__name__}'",
@@ -120,7 +119,7 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
             )
 
         # determine whether or not to process response before sending it back to caller
-        wrapped_res = pt.MIME_TYPE_RES_MAPPER[request.content_type](res)
+        wrapped_res = pt.MIME_TYPE_RES_MAPPER[f.response_mime_type](res)
 
         return wrapped_res
 
