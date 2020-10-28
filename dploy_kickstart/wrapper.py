@@ -10,9 +10,8 @@ import functools
 import typing
 import traceback
 
-from flask import request
+from flask import request, jsonify
 import dploy_kickstart.errors as pe
-import dploy_kickstart.transformers as pt
 import dploy_kickstart.annotations as pa
 
 
@@ -105,9 +104,12 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
         # preprocess input for callable
         try:
             if f.request_content_type == 'application/json':
-                res = pt.json_req(f, request)
+                if f.json_to_kwargs:
+                    return f(**request.json)
+                else:
+                    return f(request.json)
             else:
-                res = pt.raw_req(f, request)
+                res = f(request.data)
         except Exception:
             raise pe.UserApplicationError(
                 message=f"error in executing '{f.__name__}'",
@@ -116,10 +118,8 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
 
         # determine whether or not to process response before sending it back to caller
         if f.response_mime_type == 'application/json':
-            wrapped_res = pt.json_resp(res)
+            return jsonify(res)
         else:
-            wrapped_res = pt.raw_resp(res)
-
-        return wrapped_res
+            return res
 
     return exposed_func
