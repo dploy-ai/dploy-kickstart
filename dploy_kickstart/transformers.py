@@ -27,12 +27,3 @@ def json_req(f: da.AnnotatedCallable, req: Request):
 def raw_req(f: da.AnnotatedCallable, req: Request):
     """ Preprocess raw data request. """
     return f(req.data)
-
-
-MIME_TYPE_REQ_MAPPER = {
-    "application/json": json_req,
-}
-
-MIME_TYPE_RES_MAPPER = {
-    "application/json": json_resp,
-}
