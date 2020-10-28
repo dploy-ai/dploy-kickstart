@@ -110,7 +110,7 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
                     f.request_content_type
                 )
             )
-        
+
         # preprocess input for callable
         try:
             res = pt.MIME_TYPE_REQ_MAPPER[f.request_content_type](f, request)

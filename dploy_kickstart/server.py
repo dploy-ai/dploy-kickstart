@@ -40,7 +40,10 @@ def append_entrypoint(app: Flask, entrypoint: str, location: str) -> Flask:
             po.path_spec(openapi_spec, f)
 
     app.add_url_rule(
-        "/openapi.yaml", "/openapi.yaml", openapi_spec.to_yaml, methods=["GET"],
+        "/openapi.yaml",
+        "/openapi.yaml",
+        openapi_spec.to_yaml,
+        methods=["GET"],
     )
 
     return app
