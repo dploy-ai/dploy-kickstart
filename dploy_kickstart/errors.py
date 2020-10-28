@@ -12,6 +12,17 @@ class ServerException(Exception):
         pass
 
 
+class UnsupportedMediaType(ServerException):
+    status_code = 415
+
+    def __init__(self, message: str):
+        super().__init__(self)
+        self.message = message
+
+    def to_dict(self) -> dict:
+        return dict(message=self.message)
+
+
 class ScriptImportError(ServerException):
     status_code = 500
 

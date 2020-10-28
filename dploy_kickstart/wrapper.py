@@ -10,8 +10,10 @@ import functools
 import typing
 import traceback
 
-from flask import request, jsonify
+from flask import request
 import dploy_kickstart.errors as pe
+
+import dploy_kickstart.transformers as pt
 import dploy_kickstart.annotations as pa
 
 
@@ -101,15 +103,18 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
     """Wrap functions with request logic."""
 
     def exposed_func() -> typing.Callable:
+        # some sanity checking
+        if request.content_type.lower() != f.request_content_type:
+            raise pe.UnsupportedMediaType(
+                "Please provide a valid 'Content-Type' header, valid: {}".format(
+                    f.request_content_type
+                )
+            )
+        
         # preprocess input for callable
         try:
-            if f.request_content_type == 'application/json':
-                if f.json_to_kwargs:
-                    return f(**request.json)
-                else:
-                    return f(request.json)
-            else:
-                res = f(request.data)
+            res = pt.MIME_TYPE_REQ_MAPPER[f.request_content_type](f, request)
+
         except Exception:
             raise pe.UserApplicationError(
                 message=f"error in executing '{f.__name__}'",
@@ -117,9 +122,6 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
             )
 
         # determine whether or not to process response before sending it back to caller
-        if f.response_mime_type == 'application/json':
-            return jsonify(res)
-        else:
-            return res
+        return pt.MIME_TYPE_RES_MAPPER[f.response_mime_type](res)
 
     return exposed_func
