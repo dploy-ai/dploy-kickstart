@@ -57,8 +57,8 @@ def generate_app() -> Flask:
     @app.errorhandler(pe.ServerException)
     def handle_server_exception(error: pe.ServerException) -> None:
         response_dict = error.to_dict()
-        response = jsonify(response_dict)
         log.error(response_dict)
+        response = jsonify(response_dict)
         response.status_code = error.status_code
         return response
 
