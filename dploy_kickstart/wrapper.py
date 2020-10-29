@@ -103,14 +103,6 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
     """Wrap functions with request logic."""
 
     def exposed_func() -> typing.Callable:
-        # some sanity checking
-        if request.content_type.lower() != f.request_content_type:
-            raise pe.UnsupportedMediaType(
-                "Please provide a valid 'Content-Type' header, valid: {}".format(
-                    f.request_content_type
-                )
-            )
-
         # preprocess input for callable
         try:
             res = pt.MIME_TYPE_REQ_MAPPER[f.request_content_type](f, request)

@@ -45,7 +45,7 @@ def test_client():
             "application/json",
             "application/json",
             True,
-            415,
+            -1,
         ),
         (
             "server_img.py",
@@ -122,7 +122,7 @@ def test_client():
             "application/json",
             "",
             True,
-            415,
+            500,
         ),
         (
             "server_t1.py",
@@ -133,7 +133,7 @@ def test_client():
             "application/json",
             "application/bla",
             True,
-            415,
+            500,
         ),
         # not annotated
         (
@@ -323,7 +323,7 @@ def test_healthz(path, status_code, method, error):
     stream = StringIO()
     handler = logging.StreamHandler(stream)
     app = ps.generate_app()
-    app = ps.append_entrypoint(app, 'server_t1.py', p)
+    app = ps.append_entrypoint(app, "server_t1.py", p)
     app.logger.addHandler(handler)
     t_client = app.test_client()
     resp = getattr(t_client, method)("/healthz/")
