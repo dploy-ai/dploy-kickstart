@@ -45,7 +45,6 @@ def test_serve(entrypoint, requirements, path, payload, wsgi, deps):
         if deps:
             args = args + ["-d", deps]
         args.append(wsgi)
-        print(args)
         runner.invoke(dc.serve, args)
 
     p = Process(target=background)

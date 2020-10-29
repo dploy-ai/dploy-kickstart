@@ -91,8 +91,6 @@ def t11():
 def test_callable_annotation(
     callable, endpoint, endpoint_path, has_args, output, error
 ):
-    if callable == t9:
-        a = 5
     try:
         ca = pa.AnnotatedCallable(callable)
     except Exception:
