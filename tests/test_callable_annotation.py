@@ -44,6 +44,34 @@ def t7():
     return t1()
 
 
+this_dir = os.path.dirname(os.path.abspath(__file__))
+img1 = open(os.path.join(this_dir, "assets", "test.jpg"), "rb").read()
+
+# @dploy endpoint get_image
+# @dploy request_content_type image
+# @dploy response_mime_type image
+def t8():
+    return img1
+
+
+# @dploy endpoint get_image2
+# @dploy request_content_type blaaa
+def t9():
+    return img1
+
+# @dploy endpoint get_image3
+# @dploy response_mime_type blaaa
+def t10():
+    return img1
+
+
+# @dploy endpoint get_image4
+# @dploy request_content_type blaaa
+# @dploy response_mime_type blaaa
+def t11():
+    return img1
+
+
 @pytest.mark.parametrize(
     "callable,endpoint,endpoint_path,has_args,output, error",
     [
@@ -54,11 +82,17 @@ def t7():
         (t5, True, "/xyz/", True, 1, False),
         (t6, True, "/with_slashes/", True, 1, False),
         (t7, True, "/", True, 1, False),
+        (t8, True, "/get_image/", True, img1, False),
+        (t9, True, "/get_image2/", True, img1, True),
+        (t10, True, "/get_image3/", True, img1, True),
+        (t11, True, "/get_image4/", True, img1, True),
     ],
 )
 def test_callable_annotation(
     callable, endpoint, endpoint_path, has_args, output, error
 ):
+    if callable == t9:
+        a = 5
     try:
         ca = pa.AnnotatedCallable(callable)
     except Exception:
