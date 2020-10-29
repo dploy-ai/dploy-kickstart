@@ -38,7 +38,7 @@ class UnsupportedMediaType(ServerException):
     status_code = 415
 
     def __init__(self, message: str):
-        super().__init__(self)
+        super().__init__(message)
         self.message = message
 
     def to_dict(self) -> dict:
