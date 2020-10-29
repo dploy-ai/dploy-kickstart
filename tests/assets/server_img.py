@@ -3,33 +3,36 @@ import io
 
 
 # @dploy endpoint f1
-# @dploy request_content_type image/jpeg
+# @dploy request_content_type image
 def f1(raw_image):
     image = Image.open(io.BytesIO(raw_image))
     width, height = image.size
     # build a response dict to send back to client
-    return {'message': 'size={}x{}'.format(width, height)}
+    return {"message": "size={}x{}".format(width, height)}
 
 
 # @dploy endpoint f2
-# @dploy request_content_type image/png
+# @dploy request_content_type image
 def f2(raw_image):
     image = Image.open(io.BytesIO(raw_image))
     width, height = image.size
     # build a response dict to send back to client
-    return {'message': 'image received. size={}x{}'.format(width, height)}
+    return {"message": "image received. size={}x{}".format(width, height)}
 
 
 # @dploy endpoint f3
-# @dploy request_content_type image/jpeg
-# @dploy response_mime_type image/jpeg
+# @dploy request_content_type image
+# @dploy response_mime_type image
 def f3(raw_image):
-    return raw_image
+    image = Image.open(io.BytesIO(raw_image))
 
+    # create file-object in memory
+    file_object = io.BytesIO()
 
-# @dploy endpoint f4
-# @dploy request_content_type image/png
-# @dploy response_mime_type image/png
-def f4(raw_image):
-    return raw_image
+    # write PNG in file-object keep quality as 100 and subsampling as 0
+    # to save the image exactly same with the original format
+    image.save(file_object, image.format, quality=100, subsampling=0)
 
+    # move to beginning of file so `send_file()` it will read from start
+    file_object.seek(0)
+    return file_object

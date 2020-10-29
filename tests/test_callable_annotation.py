@@ -78,10 +78,17 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 @pytest.mark.parametrize(
     "py_file,expected",
     [
-        ("c1.py", [["endpoint", "predict"], ["endpoint", "train2"]],),
+        (
+            "c1.py",
+            [["endpoint", "predict"], ["endpoint", "train2"]],
+        ),
         (
             "nb_with_comments.ipynb",
-            [["endpoint", "predict"], ["endpoint", "train"], ["trigger", "train"],],
+            [
+                ["endpoint", "predict"],
+                ["endpoint", "train"],
+                ["trigger", "train"],
+            ],
         ),
     ],
 )
@@ -140,7 +147,9 @@ def test_annotated_scripts(py_file, expected):
         #
         # irrelevant other stuff
         """,
-            [["arg", "foo bar", "arg2", "bar the foos"],],
+            [
+                ["arg", "foo bar", "arg2", "bar the foos"],
+            ],
         ],
         [
             """
