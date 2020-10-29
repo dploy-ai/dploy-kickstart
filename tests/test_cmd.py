@@ -24,7 +24,6 @@ OWD = os.getcwd()
     "entrypoint, requirements, path, payload, deps",
     [
         ("check_mimetypes.py", None, "/xyz/", '{"a": 1, "b": 2, "c": 3}', None),
-        ("check_mimetypes.py", None, "/xyz/", '{"a": 1, "b": 2, "c": 3}', None),
         (
             "server_t1.py",
             None,
