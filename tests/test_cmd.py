@@ -21,19 +21,21 @@ OWD = os.getcwd()
 
 
 @pytest.mark.parametrize(
-    "entrypoint, requirements, path, payload, deps",
+    "entrypoint, requirements, path, payload, wsgi, deps",
     [
-        ("check_mimetypes.py", None, "/xyz/", '{"a": 1, "b": 2, "c": 3}', None),
+        ("check_mimetypes.py", None, "/xyz/", '{"a": 1, "b": 2, "c": 3}', '--wsgi', None),
+        ("check_mimetypes.py", None, "/xyz/", '{"a": 1, "b": 2, "c": 3}', '--no-wsgi', None),
         (
             "server_t1.py",
             None,
             "/predict/",
             '{"val": 1}',
+            '--wsgi',
             "deps_tests/requirements.txt",
         ),
     ],
 )
-def test_serve(entrypoint, requirements, path, payload, deps):
+def test_serve(entrypoint, requirements, path, payload, wsgi, deps):
     pth = os.path.join(THIS_DIR, "assets")
 
     def background():
@@ -42,7 +44,8 @@ def test_serve(entrypoint, requirements, path, payload, deps):
 
         if deps:
             args = args + ["-d", deps]
-
+        args.append(wsgi)
+        print(args)
         runner.invoke(dc.serve, args)
 
     p = Process(target=background)
