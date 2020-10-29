@@ -286,3 +286,48 @@ def test_server_logs(
         assert re.match(str_pattern, str_log_stream)
     except AssertionError:
         assert error
+
+
+@pytest.mark.parametrize(
+    "path, status_code, method, error",
+    [
+        (
+            "/healthz/",
+            200,
+            "get",
+            False,
+        ),
+        (
+            "/healthz",
+            200,
+            "get",
+            False,
+        ),
+        (
+            "/healthz/",
+            200,
+            "post",
+            True,
+        ),
+        (
+            "/health/",
+            200,
+            "get",
+            True,
+        ),
+    ],
+)
+@pytest.mark.usefixtures("restore_wd")
+def test_healthz(path, status_code, method, error):
+    p = os.path.join(THIS_DIR, "assets")
+    stream = StringIO()
+    handler = logging.StreamHandler(stream)
+    app = ps.generate_app()
+    app = ps.append_entrypoint(app, 'server_t1.py', p)
+    app.logger.addHandler(handler)
+    t_client = app.test_client()
+    resp = getattr(t_client, method)("/healthz/")
+    try:
+        assert resp.status_code == status_code
+    except AssertionError:
+        assert error
