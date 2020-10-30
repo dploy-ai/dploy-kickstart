@@ -82,3 +82,10 @@ def f6(raw_image):
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
     return file_object.getvalue()
+
+
+# @dploy endpoint f7
+# @dploy request_content_type string
+# @dploy response_mime_type string
+def f7(some_string):
+    return some_string

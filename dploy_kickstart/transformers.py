@@ -15,12 +15,15 @@ def default_resp(func_result: typing.Any) -> Response:
     elif isinstance(func_result, BytesIO):
         return func_result.getvalue()
     else:
-        raise de.UserApplicationError(
-            message="Only `bytes` or `io.BytesIO` can be "
-            "provided as a valid return data type for"
-            "your dploy annotated methods.",
-            traceback=traceback.format_exc(),
-        )
+        try:
+            return json_resp(func_result)
+        except Exception:
+            raise de.UserApplicationError(
+                message="Only `bytes`, `io.BytesIO` or `JSON` compatible"
+                " data types can be provided as a valid return type"
+                " for your dploy annotated methods.",
+                traceback=traceback.format_exc(),
+            )
 
 
 def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:

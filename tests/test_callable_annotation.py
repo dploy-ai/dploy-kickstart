@@ -59,6 +59,7 @@ def t8():
 def t9():
     return img1
 
+
 # @dploy endpoint get_image3
 # @dploy response_mime_type blaaa
 def t10():

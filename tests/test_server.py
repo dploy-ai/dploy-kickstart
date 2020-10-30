@@ -125,6 +125,17 @@ def test_client():
             200,
         ),
         (
+            "server_bytes.py",
+            "post",
+            "/f7/",
+            "foobar",
+            "foobar",
+            "string",
+            "string",
+            False,
+            200,
+        ),
+        (
             "server_t1.py",
             "post",
             "/predict/",
