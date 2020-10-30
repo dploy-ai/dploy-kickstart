@@ -4,9 +4,6 @@ import inspect
 import typing
 import re
 
-import dploy_kickstart.transformers as dt
-import dploy_kickstart.errors as de
-
 
 class AnnotatedCallable:
     """Wrap a callable and allow annotation (comments) extraction."""
