@@ -34,17 +34,6 @@ class UnsupportedEntrypoint(ServerException):
         return dict(message=self.message)
 
 
-class UnsupportedMediaType(ServerException):
-    status_code = 415
-
-    def __init__(self, message: str):
-        super().__init__(message)
-        self.message = message
-
-    def to_dict(self) -> dict:
-        return dict(message=self.message)
-
-
 class UserApplicationError(ServerException):
     status_code = 500
 
