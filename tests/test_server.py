@@ -25,7 +25,7 @@ def test_client():
     "entrypoint, method, path, payload, response, accept, content_type, error, status_code",
     [
         (
-            "server_img.py",
+            "server_bytes.py",
             "post",
             "/f1/",
             JPG_IMG,
@@ -37,7 +37,7 @@ def test_client():
         ),
         # Wrong content-type (based on defined content-type)
         (
-            "server_img.py",
+            "server_bytes.py",
             "post",
             "/f1/",
             JPG_IMG,
@@ -48,7 +48,7 @@ def test_client():
             -1,
         ),
         (
-            "server_img.py",
+            "server_bytes.py",
             "post",
             "/f2/",
             PNG_IMG,
@@ -59,7 +59,7 @@ def test_client():
             200,
         ),
         (
-            "server_img.py",
+            "server_bytes.py",
             "post",
             "/f3/",
             PNG_IMG,
@@ -70,7 +70,7 @@ def test_client():
             200,
         ),
         (
-            "server_img.py",
+            "server_bytes.py",
             "post",
             "/f3/",
             JPG_IMG,
@@ -81,7 +81,7 @@ def test_client():
             200,
         ),
         (
-            "server_img.py",
+            "server_bytes.py",
             "post",
             "/f3/",
             JPG_IMG,
@@ -90,6 +90,39 @@ def test_client():
             "application/json",
             True,
             -1,
+        ),
+        (
+            "server_bytes.py",
+            "post",
+            "/f4/",
+            PNG_IMG,
+            b'{"message":"image received. size=1x1"}\n',
+            "default",
+            "default",
+            True,
+            500,
+        ),
+        (
+            "server_bytes.py",
+            "post",
+            "/f5/",
+            PNG_IMG,
+            PNG_IMG,
+            "default",
+            "default",
+            False,
+            200,
+        ),
+        (
+            "server_bytes.py",
+            "post",
+            "/f6/",
+            PNG_IMG,
+            PNG_IMG,
+            "default",
+            "default",
+            False,
+            200,
         ),
         (
             "server_t1.py",

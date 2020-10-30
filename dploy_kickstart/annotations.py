@@ -69,19 +69,9 @@ class AnnotatedCallable:
                 self.endpoint_path = p
 
             if c[0] == "response_mime_type":
-                if not c[1].lower() in dt.MIME_TYPE_RES_MAPPER.keys():
-                    raise de.UnsupportedMediaType(
-                        f"unsupported response_mime_type `{c[1].lower()}` "
-                        f"set for function `{self.callble.__name__}`."
-                    )
                 self.response_mime_type = c[1].lower()
 
             if c[0] == "request_content_type":
-                if not c[1].lower() in dt.MIME_TYPE_REQ_MAPPER.keys():
-                    raise de.UnsupportedMediaType(
-                        f"Unsupported request_content_type `{c[1].lower()}` "
-                        f"set for function `{self.callble.__name__}`."
-                    )
                 self.request_content_type = c[1].lower()
 
             if c[0] == "request_method":

@@ -1,6 +1,7 @@
 """Utilities to transform requests and responses."""
 
 import typing
+import traceback
 from flask import jsonify, Response, Request
 from io import BytesIO
 import dploy_kickstart.annotations as da
@@ -16,8 +17,10 @@ def default_resp(func_result: typing.Any) -> Response:
     else:
         raise de.UserApplicationError(
             message="Only `bytes` or `io.BytesIO` can be "
-                    "provided as a valid return data type for"
-                    "your dploy annotated methods.")
+            "provided as a valid return data type for"
+            "your dploy annotated methods.",
+            traceback=traceback.format_exc(),
+        )
 
 
 def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
