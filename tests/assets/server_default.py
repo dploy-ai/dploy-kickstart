@@ -89,3 +89,11 @@ def f6(raw_image):
 # @dploy response_mime_type string
 def f7(some_string):
     return some_string
+
+
+# @dploy endpoint f8
+# @dploy request_content_type string
+# @dploy response_mime_type string
+def f8(raw_image):
+    image = Image.open(io.BytesIO(raw_image))
+    return image
