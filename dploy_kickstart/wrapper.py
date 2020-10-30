@@ -105,7 +105,10 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
     def exposed_func() -> typing.Callable:
         # preprocess input for callable
         try:
-            res = pt.MIME_TYPE_REQ_MAPPER[f.request_content_type](f, request)
+            if f.request_content_type in pt.MIME_TYPE_REQ_MAPPER:
+                res = pt.MIME_TYPE_REQ_MAPPER[f.request_content_type](f, request)
+            else:
+                res = pt.MIME_TYPE_REQ_MAPPER["default"](f, request)
 
         except Exception:
             raise pe.UserApplicationError(
@@ -114,6 +117,9 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
             )
 
         # determine whether or not to process response before sending it back to caller
-        return pt.MIME_TYPE_RES_MAPPER[f.response_mime_type](res)
+        if f.response_mime_type in pt.MIME_TYPE_RES_MAPPER:
+            return pt.MIME_TYPE_RES_MAPPER[f.response_mime_type](res)
+        else:
+            return pt.MIME_TYPE_RES_MAPPER["default"](res)
 
     return exposed_func

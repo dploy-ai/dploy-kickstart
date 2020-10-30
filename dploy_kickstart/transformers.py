@@ -1,19 +1,26 @@
 """Utilities to transform requests and responses."""
 
 import typing
-from flask import jsonify, Response, Request, send_file
-
+from flask import jsonify, Response, Request
+from io import BytesIO
 import dploy_kickstart.annotations as da
+import dploy_kickstart.errors as de
 
 
-def image_resp(func_result: typing.Any) -> Response:
-    """Transform byte image response."""
-    # Note that mime_type is image/png and it's a placeholder for images
-    # both image/png, image/jpeg, image/gif are supported
-    return send_file(func_result, mimetype="image/png")
+def default_resp(func_result: typing.Any) -> Response:
+    """Transform byte stream response."""
+    if isinstance(func_result, bytes):
+        return func_result
+    elif isinstance(func_result, BytesIO):
+        return func_result.getvalue()
+    else:
+        raise de.UserApplicationError(
+            message="Only `bytes` or `io.BytesIO` can be "
+                    "provided as a valid return data type for"
+                    "your dploy annotated methods.")
 
 
-def image_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
+def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
     return f(req.data)
 
 
@@ -30,6 +37,14 @@ def json_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
         return f(req.json)
 
 
-MIME_TYPE_REQ_MAPPER = {"application/json": json_req, "image": image_req}
+MIME_TYPE_REQ_MAPPER = {
+    "application/json": json_req,
+    "image": default_req,
+    "default": default_req,
+}
 
-MIME_TYPE_RES_MAPPER = {"application/json": json_resp, "image": image_resp}
+MIME_TYPE_RES_MAPPER = {
+    "application/json": json_resp,
+    "image": default_resp,
+    "default": default_resp,
+}
