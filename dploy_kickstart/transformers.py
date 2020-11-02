@@ -8,22 +8,12 @@ import dploy_kickstart.annotations as da
 import dploy_kickstart.errors as de
 
 
-def default_resp(func_result: typing.Any) -> Response:
-    """Transform byte stream response."""
-    if isinstance(func_result, bytes):
-        return func_result
-    elif isinstance(func_result, BytesIO):
-        return func_result.getvalue()
-    else:
-        try:
-            return json_resp(func_result)
-        except Exception:
-            raise de.UserApplicationError(
-                message="Only `bytes`, `io.BytesIO` or `JSON` compatible"
-                " data types can be provided as a valid return type"
-                " for your dploy annotated methods.",
-                traceback=traceback.format_exc(),
-            )
+def bytes_resp(func_result: typing.Any) -> Response:
+    return func_result
+
+
+def bytes_io_resp(func_result: typing.Any) -> Response:
+    return func_result.getvalue()
 
 
 def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
@@ -43,14 +33,14 @@ def json_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
         return f(req.json)
 
 
-MIME_TYPE_REQ_MAPPER = {
-    "application/json": json_req,
-    "image": default_req,
-    "default": default_req,
-}
+MIME_TYPE_REQ_MAPPER = {True: json_req, False: default_req}
 
 MIME_TYPE_RES_MAPPER = {
-    "application/json": json_resp,
-    "image": default_resp,
-    "default": default_resp,
+    "int": json_resp,
+    "float": json_resp,
+    "str": json_resp,
+    "list": json_resp,
+    "dict": json_resp,
+    "bytes": bytes_resp,
+    "BytesIO": bytes_io_resp,
 }

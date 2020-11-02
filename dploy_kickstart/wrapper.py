@@ -105,21 +105,21 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
     def exposed_func() -> typing.Callable:
         # preprocess input for callable
         try:
-            if f.request_content_type in pt.MIME_TYPE_REQ_MAPPER:
-                res = pt.MIME_TYPE_REQ_MAPPER[f.request_content_type](f, request)
-            else:
-                res = pt.MIME_TYPE_REQ_MAPPER["default"](f, request)
-
+            res = pt.MIME_TYPE_REQ_MAPPER[request.is_json](f, request)
         except Exception:
             raise pe.UserApplicationError(
-                message=f"error in executing '{f.__name__}'",
+                message=f"error in executing '{f.__name__()}' method.",
                 traceback=traceback.format_exc(),
             )
 
         # determine whether or not to process response before sending it back to caller
-        if f.response_mime_type in pt.MIME_TYPE_RES_MAPPER:
-            return pt.MIME_TYPE_RES_MAPPER[f.response_mime_type](res)
-        else:
-            return pt.MIME_TYPE_RES_MAPPER["default"](res)
+        try:
+            return pt.MIME_TYPE_RES_MAPPER[res.__class__.__name__](res)
+        except Exception:
+            raise pe.UserApplicationError(
+                message=f"error in executing '{f.__name__()}' method, the return type "
+                f"{res.__class__.__name__} is not supported",
+                traceback=traceback.format_exc(),
+            )
 
     return exposed_func
