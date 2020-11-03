@@ -47,14 +47,6 @@ Following annotation options are currently available.
 
 - `# @dploy endpoint {endpoint_path}`  
   Will expose the annotated function on path {endpoint_path} with trailing slash (and redirect without trailing slash).
-- `# @dploy response_mime_type {mimetype}`  
-  Specify response mime type, will wrap function response accordingly.
-  default: `application/json`  
-  available: `application/json`
-- `# @dploy request_content_type {content_type}`  
-  Specify allowed request content type.  
-  default: `application/json`
-  available: `application/json`
 - `# @dploy request_method {method}`  
   Specify allowed request method.  
   default: `post`  

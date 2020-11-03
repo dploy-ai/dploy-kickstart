@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dploy-kickstart"
-version = "0.1.8"
+version = "0.1.9"
 description = "Expose your functions as HTTP endpoints."
 authors = ["Bart Smeets <bart@dploy.ai>"]
 license = "MIT"
@@ -27,6 +27,7 @@ flake8 = "^3.7.9"
 pytest-cov = "^2.8.1"
 requests = "^2.23.0"
 flynt = "^0.46.1"
+pillow = "^8.0.1"
 
 [tool.black]
 line-length = 88

@@ -42,7 +42,6 @@ def test_serve(entrypoint, requirements, path, payload, deps):
 
         if deps:
             args = args + ["-d", deps]
-
         runner.invoke(dc.serve, args)
 
     p = Process(target=background)

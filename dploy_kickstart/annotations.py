@@ -4,9 +4,6 @@ import inspect
 import typing
 import re
 
-import dploy_kickstart.transformers as dt
-import dploy_kickstart.errors as de
-
 
 class AnnotatedCallable:
     """Wrap a callable and allow annotation (comments) extraction."""
@@ -23,8 +20,12 @@ class AnnotatedCallable:
         self.request_method = "post"
         self.accepts_json = True
         self.returns_json = True
-        self.response_mime_type = "application/json"
-        self.request_content_type = "application/json"
+        self.response_mime_type = (
+            "application/json"  # functionality deprecated, to be removed `
+        )
+        self.request_content_type = (
+            "application/json"  # functionality deprecated, to be removed `
+        )
         self.json_to_kwargs = False
 
         if not callable(callble):
@@ -68,22 +69,12 @@ class AnnotatedCallable:
                 self.endpoint = True
                 self.endpoint_path = p
 
+            # functionality deprecated, to be removed
             if c[0] == "response_mime_type":
-                if not c[1].lower() in dt.MIME_TYPE_RES_MAPPER.keys():
-                    raise de.UnsupportedMediaType(
-                        "unsupported response_mime_type set for function {}".format(
-                            self.callble.__name__
-                        )
-                    )
                 self.response_mime_type = c[1].lower()
 
+            # functionality deprecated, to be removed
             if c[0] == "request_content_type":
-                if not c[1].lower() in dt.MIME_TYPE_REQ_MAPPER.keys():
-                    raise de.UnsupportedMediaType(
-                        "unsupported request_content_type set for function {}".format(
-                            self.callble.__name__
-                        )
-                    )
                 self.request_content_type = c[1].lower()
 
             if c[0] == "request_method":

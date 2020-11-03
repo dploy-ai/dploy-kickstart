@@ -12,8 +12,10 @@ import traceback
 
 from flask import request
 import dploy_kickstart.errors as pe
+
 import dploy_kickstart.transformers as pt
 import dploy_kickstart.annotations as pa
+
 
 log = logging.getLogger(__name__)
 
@@ -47,7 +49,7 @@ def nb_to_py(nb_file: str, location: str) -> str:
     return os.path.basename(filename), os.path.dirname(filename)
 
 
-def get_func_annotations(mod: typing.Generic) -> typing.Dict:
+def get_func_annotations(mod: typing.Generic) -> typing.List[pa.AnnotatedCallable]:
     """Scan usercode for function annotations."""
     cm = []
     # check which functions have relevant args and return 'em
@@ -56,7 +58,6 @@ def get_func_annotations(mod: typing.Generic) -> typing.Dict:
             ac = pa.AnnotatedCallable(val)
             if ac.has_args():
                 cm.append(ac)
-
     return cm
 
 
@@ -102,26 +103,23 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
     """Wrap functions with request logic."""
 
     def exposed_func() -> typing.Callable:
-        # some sanity checking
-        if request.content_type.lower() != f.request_content_type:
-            raise pe.UnsupportedMediaType(
-                "Please provide a valid 'Content-Type' header, valid: {}".format(
-                    f.request_content_type
-                )
-            )
-
         # preprocess input for callable
         try:
-            res = pt.MIME_TYPE_REQ_MAPPER[f.response_mime_type](f, request)
+            res = pt.MIME_TYPE_REQ_MAPPER[request.is_json](f, request)
         except Exception:
             raise pe.UserApplicationError(
-                message=f"error in executing '{f.__name__}'",
+                message=f"error in executing '{f.__name__()}' method.",
                 traceback=traceback.format_exc(),
             )
 
         # determine whether or not to process response before sending it back to caller
-        wrapped_res = pt.MIME_TYPE_RES_MAPPER[request.content_type](res)
-
-        return wrapped_res
+        try:
+            return pt.MIME_TYPE_RES_MAPPER[res.__class__.__name__](res)
+        except Exception:
+            raise pe.UserApplicationError(
+                message=f"error in executing '{f.__name__()}' method, the return type "
+                f"{res.__class__.__name__} is not supported",
+                traceback=traceback.format_exc(),
+            )
 
     return exposed_func

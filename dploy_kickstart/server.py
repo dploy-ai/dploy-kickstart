@@ -40,7 +40,10 @@ def append_entrypoint(app: Flask, entrypoint: str, location: str) -> Flask:
             po.path_spec(openapi_spec, f)
 
     app.add_url_rule(
-        "/openapi.yaml", "/openapi.yaml", openapi_spec.to_yaml, methods=["GET"],
+        "/openapi.yaml",
+        "/openapi.yaml",
+        openapi_spec.to_yaml,
+        methods=["GET"],
     )
 
     return app
@@ -57,8 +60,8 @@ def generate_app() -> Flask:
     @app.errorhandler(pe.ServerException)
     def handle_server_exception(error: pe.ServerException) -> None:
         response_dict = error.to_dict()
-        response = jsonify(response_dict)
         log.error(response_dict)
+        response = jsonify(response_dict)
         response.status_code = error.status_code
         return response
 
