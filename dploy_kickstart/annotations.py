@@ -20,8 +20,12 @@ class AnnotatedCallable:
         self.request_method = "post"
         self.accepts_json = True
         self.returns_json = True
-        self.response_mime_type = "application/json"
-        self.request_content_type = "application/json"
+        self.response_mime_type = (
+            "application/json"  # functionality deprecated, to be removed `
+        )
+        self.request_content_type = (
+            "application/json"  # functionality deprecated, to be removed `
+        )
         self.json_to_kwargs = False
 
         if not callable(callble):
@@ -65,9 +69,11 @@ class AnnotatedCallable:
                 self.endpoint = True
                 self.endpoint_path = p
 
+            # functionality deprecated, to be removed
             if c[0] == "response_mime_type":
                 self.response_mime_type = c[1].lower()
 
+            # functionality deprecated, to be removed
             if c[0] == "request_content_type":
                 self.request_content_type = c[1].lower()
 

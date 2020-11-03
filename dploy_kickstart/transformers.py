@@ -6,11 +6,11 @@ import dploy_kickstart.annotations as da
 
 
 def bytes_resp(func_result: typing.Any) -> Response:
-    return Response(func_result, mimetype='application/octet-stream')
+    return Response(func_result, mimetype="application/octet-stream")
 
 
 def bytes_io_resp(func_result: typing.Any) -> Response:
-    return Response(func_result.getvalue(), mimetype='application/octet-stream')
+    return Response(func_result.getvalue(), mimetype="application/octet-stream")
 
 
 def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
