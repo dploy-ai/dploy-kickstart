@@ -114,7 +114,9 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
 
         # determine whether or not to process response before sending it back to caller
         try:
-            return pt.MIME_TYPE_RES_MAPPER[res.__class__.__name__](res)
+            return pt.MIME_TYPE_RES_MAPPER[res.__class__.__name__](
+                res, f.response_mime_type
+            )
         except Exception:
             raise pe.UserApplicationError(
                 message=f"error in executing '{f.__name__()}' method, the return type "

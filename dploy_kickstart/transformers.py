@@ -15,33 +15,42 @@ except ImportError as e:
     )
 
 
-def bytes_resp(func_result: typing.Any) -> Response:
-    return Response(func_result, mimetype="application/octet-stream")
+def bytes_resp(func_result: typing.Any, mimetype=None) -> Response:
+    if mimetype is None:
+        return Response(func_result, mimetype="application/octet-stream")
+    else:
+        return Response(func_result, mimetype=mimetype)
 
 
-def bytes_io_resp(func_result: typing.Any) -> Response:
-    return Response(func_result.getvalue(), mimetype="application/octet-stream")
+def bytes_io_resp(func_result: typing.Any, mimetype=None) -> Response:
+    if mimetype is None:
+        return Response(func_result.getvalue(), mimetype="application/octet-stream")
+    else:
+        return Response(func_result.getvalue(), mimetype=mimetype)
 
 
-def pil_image_resp(func_result: Image) -> Response:
+def pil_image_resp(func_result: Image, mimetype=None) -> Response:
     # create file-object in memory
     file_object = io.BytesIO()
     img_format = func_result.format
 
     # write PNG in file-object
     func_result.save(file_object, img_format)
-    mimetype = f"image/{img_format.lower()}"
+    auto_mimetype = f"image/{img_format.lower()}"
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
-    return Response(file_object, mimetype=mimetype)
+    if mimetype is None:
+        return Response(file_object, mimetype=auto_mimetype)
+    else:
+        return Response(file_object, mimetype=mimetype)
 
 
 def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
     return f(req.data)
 
 
-def json_resp(func_result: typing.Any) -> Response:
+def json_resp(func_result: typing.Any, *kwargs) -> Response:
     """Transform json response."""
     return jsonify(func_result)
 
