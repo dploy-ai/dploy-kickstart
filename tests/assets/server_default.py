@@ -97,3 +97,24 @@ def f7(some_string):
 def f8(raw_image):
     image = Image.open(io.BytesIO(raw_image))
     return image
+
+
+# @dploy endpoint f9
+def f9(raw_image):
+    image = Image.open(io.BytesIO(raw_image))
+
+    # Size of the image in pixels (size of original image)
+    # (This is not mandatory)
+    width, height = image.size
+
+    # Setting the points for cropped image
+    left = 5
+    top = height / 4
+    right = 164
+    bottom = 3 * height / 4
+
+    # Cropped image of above dimension
+    # (It will not change orginal image)
+    im1 = image.crop((left, top, right, bottom))
+    im1.format = image.format  # original image extension
+    return im1

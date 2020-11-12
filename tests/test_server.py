@@ -13,6 +13,8 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=os.environ.get("LOGLEVEL", os.getenv("LOGLEVEL", "INFO")))
 PNG_IMG = open(os.path.join(THIS_DIR, "assets", "test.png"), "rb").read()
 JPG_IMG = open(os.path.join(THIS_DIR, "assets", "test.jpg"), "rb").read()
+GOLF_IMG = open(os.path.join(THIS_DIR, "assets", "golf.png"), "rb").read()
+CROPPED_GOLF_IMG = open(os.path.join(THIS_DIR, "assets", "cropped_golf.png"), "rb").read()
 
 
 def test_client():
@@ -145,6 +147,18 @@ def test_client():
             "random",
             True,
             500,
+        ),
+        # PIL IMAGE RETURN
+        (
+            "server_default.py",
+            "post",
+            "/f9/",
+            GOLF_IMG,
+            CROPPED_GOLF_IMG,
+            "image/png",
+            "image/png",
+            False,
+            200,
         ),
         (
             "server_t1.py",

@@ -1,6 +1,7 @@
 """Utilities to transform requests and responses."""
-
+import io
 import typing
+from PIL import Image
 from flask import jsonify, Response, Request
 import dploy_kickstart.annotations as da
 
@@ -11,6 +12,20 @@ def bytes_resp(func_result: typing.Any) -> Response:
 
 def bytes_io_resp(func_result: typing.Any) -> Response:
     return Response(func_result.getvalue(), mimetype="application/octet-stream")
+
+
+def pil_image_resp(func_result: Image) -> Response:
+    # create file-object in memory
+    file_object = io.BytesIO()
+    img_format = func_result.format
+
+    # write PNG in file-object
+    func_result.save(file_object, img_format)
+    mimetype = f"image/{img_format.lower()}"
+
+    # move to beginning of file so `send_file()` it will read from start
+    file_object.seek(0)
+    return Response(file_object, mimetype=mimetype)
 
 
 def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
@@ -40,4 +55,5 @@ MIME_TYPE_RES_MAPPER = {
     "dict": json_resp,
     "bytes": bytes_resp,
     "BytesIO": bytes_io_resp,
+    "Image": pil_image_resp
 }
