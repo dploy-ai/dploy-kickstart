@@ -14,7 +14,9 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", os.getenv("LOGLEVEL", "INFO
 PNG_IMG = open(os.path.join(THIS_DIR, "assets", "test.png"), "rb").read()
 JPG_IMG = open(os.path.join(THIS_DIR, "assets", "test.jpg"), "rb").read()
 GOLF_IMG = open(os.path.join(THIS_DIR, "assets", "golf.png"), "rb").read()
-CROPPED_GOLF_IMG = open(os.path.join(THIS_DIR, "assets", "cropped_golf.png"), "rb").read()
+CROPPED_GOLF_IMG = open(
+    os.path.join(THIS_DIR, "assets", "cropped_golf.png"), "rb"
+).read()
 
 
 def test_client():
@@ -360,30 +362,10 @@ def test_server_logs(
 @pytest.mark.parametrize(
     "path, status_code, method, error",
     [
-        (
-            "/healthz/",
-            200,
-            "get",
-            False,
-        ),
-        (
-            "/healthz",
-            200,
-            "get",
-            False,
-        ),
-        (
-            "/healthz/",
-            200,
-            "post",
-            True,
-        ),
-        (
-            "/health/",
-            200,
-            "get",
-            True,
-        ),
+        ("/healthz/", 200, "get", False,),
+        ("/healthz", 200, "get", False,),
+        ("/healthz/", 200, "post", True,),
+        ("/health/", 200, "get", True,),
     ],
 )
 @pytest.mark.usefixtures("restore_wd")

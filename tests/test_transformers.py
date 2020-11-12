@@ -12,8 +12,7 @@ def test_client():
 
 
 @pytest.mark.parametrize(
-    "i, o",
-    [("bla", '"bla"\n'), ({"foo": "bar"}, '{"foo":"bar"}\n')],
+    "i, o", [("bla", '"bla"\n'), ({"foo": "bar"}, '{"foo":"bar"}\n')],
 )
 def test_json_resp(i, o):
     with test_client().application.test_request_context():

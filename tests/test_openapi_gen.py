@@ -20,11 +20,7 @@ def t2():
 
 
 @pytest.mark.parametrize(
-    "callable",
-    [
-        t1,
-        t2,
-    ],
+    "callable", [t1, t2,],
 )
 def test_openapi_generation(callable):
     ca = pa.AnnotatedCallable(callable)

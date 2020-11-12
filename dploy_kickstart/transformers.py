@@ -1,9 +1,18 @@
 """Utilities to transform requests and responses."""
 import io
 import typing
-from PIL import Image
 from flask import jsonify, Response, Request
 import dploy_kickstart.annotations as da
+import dploy_kickstart.errors as pe
+
+try:
+    from PIL import Image
+except ImportError as e:
+    raise pe.ScriptImportError(
+        f"{e}\nCannot import Pillow image library."
+        + "Please add `Pillow`"
+        + " to your dependencies.",
+    )
 
 
 def bytes_resp(func_result: typing.Any) -> Response:
@@ -55,5 +64,5 @@ MIME_TYPE_RES_MAPPER = {
     "dict": json_resp,
     "bytes": bytes_resp,
     "BytesIO": bytes_io_resp,
-    "Image": pil_image_resp
+    "Image": pil_image_resp,
 }
