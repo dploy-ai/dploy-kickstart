@@ -50,9 +50,14 @@ def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
     return f(req.data)
 
 
-def json_resp(func_result: typing.Any, *kwargs) -> Response:
+def json_resp(func_result: typing.Any, mimetype=None) -> Response:
     """Transform json response."""
-    return jsonify(func_result)
+    response = jsonify(func_result)
+    if mimetype is None:
+        return response
+    else:
+        response.mimetype = mimetype
+        return response
 
 
 def json_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
