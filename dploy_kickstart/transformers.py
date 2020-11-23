@@ -4,15 +4,19 @@ import typing
 from flask import jsonify, Response, Request
 import dploy_kickstart.annotations as da
 import dploy_kickstart.errors as pe
+import functools
 
-try:
-    from PIL import Image
-except ImportError as e:
-    raise pe.ScriptImportError(
-        f"{e}\nCannot import Pillow image library."
-        + "Please add `Pillow`"
-        + " to your dependencies.",
-    )
+
+@functools.lru_cache()
+def _import_pillow_lib():
+    try:
+        from PIL import Image
+    except ImportError as e:
+        raise pe.ScriptImportError(
+            f"{e}\nCannot import Pillow image library."
+            + "Please add `Pillow`"
+            + " to your dependencies.",
+        )
 
 
 def bytes_resp(func_result: typing.Any, mimetype=None) -> Response:
@@ -29,25 +33,25 @@ def bytes_io_resp(func_result: typing.Any, mimetype=None) -> Response:
         return Response(func_result.getvalue(), mimetype=mimetype)
 
 
-def pil_image_resp(func_result: Image, mimetype=None) -> Response:
+def pil_image_resp(func_result: typing.Any, mimetype=None) -> Response:
+    _import_pillow_lib()
+
     # create file-object in memory
     file_object = io.BytesIO()
     img_format = func_result.format
 
-    # write PNG in file-object
-    func_result.save(file_object, img_format)
+    # write image to a file-object
+    # Don't change quality and subsampling since save decrease the quality by default
+    func_result.save(file_object, img_format, quality=100, subsampling=0)
     auto_mimetype = f"image/{img_format.lower()}"
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
+
     if mimetype is None:
         return Response(file_object, mimetype=auto_mimetype)
     else:
         return Response(file_object, mimetype=mimetype)
-
-
-def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
-    return f(req.data)
 
 
 def json_resp(func_result: typing.Any, mimetype=None) -> Response:
@@ -58,6 +62,10 @@ def json_resp(func_result: typing.Any, mimetype=None) -> Response:
     else:
         response.mimetype = mimetype
         return response
+
+
+def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
+    return f(req.data)
 
 
 def json_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
