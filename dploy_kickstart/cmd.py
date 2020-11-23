@@ -27,36 +27,37 @@ def cli() -> None:
     pass
 
 
-@cli.command(help="run dploy_kickstart server")
-@click.option(
-    "-e", "--entrypoint", required=True, help=".py or .ipynb to use as entrypoint"
-)
-@click.option(
-    "-l",
-    "--location",
-    required=True,
-    help="location of the script or notebook (and that will "
-    + "be used as execution context)",
-)
-@click.option(
-    "-d",
-    "--deps",
-    help="install dependencies; comma separated paths to either requirements.txt "
-    + "or setup.py files. note that this can be run separately via the "
-    + "'install-deps' command",
-)
-@click.option(
-    "--wsgi/--no-wsgi",
-    default=True,
-    help="Use Waitress as a WSGI server, defaults to True,"
-    + " else launches a Flask debug server.",
-)
-@click.option(
-    "-h", "--host", help="Host to serve on, defaults to '0.0.0.0'", default="0.0.0.0"
-)
-@click.option(
-    "-p", "--port", help="Port to serve on, defaults to '8080'", default=8080, type=int
-)
+#
+# @cli.command(help="run dploy_kickstart server")
+# @click.option(
+#     "-e", "--entrypoint", required=True, help=".py or .ipynb to use as entrypoint"
+# )
+# @click.option(
+#     "-l",
+#     "--location",
+#     required=True,
+#     help="location of the script or notebook (and that will "
+#     + "be used as execution context)",
+# )
+# @click.option(
+#     "-d",
+#     "--deps",
+#     help="install dependencies; comma separated paths to either requirements.txt "
+#     + "or setup.py files. note that this can be run separately via the "
+#     + "'install-deps' command",
+# )
+# @click.option(
+#     "--wsgi/--no-wsgi",
+#     default=True,
+#     help="Use Waitress as a WSGI server, defaults to True,"
+#     + " else launches a Flask debug server.",
+# )
+# @click.option(
+#     "-h", "--host", help="Host to serve on, defaults to '0.0.0.0'", default="0.0.0.0"
+# )
+# @click.option(
+#     "-p", "--port", help="Port to serve on, defaults to '8080'", default=8080, type=int
+# )
 def serve(
     entrypoint: str, location: str, deps: str, wsgi: bool, host: str, port: int
 ) -> typing.Any:
@@ -121,3 +122,14 @@ def _deps(deps: str, location: str) -> None:
                 "Supported formats: "
                 "requirements.txt, setup.py".format(r)
             )
+
+
+if __name__ == "__main__":
+    serve(
+        "/Users/baturayofluoglu/PycharmProjects/dploy-kickstart/foobar.py",
+        "/Users/baturayofluoglu/PycharmProjects/dploy-kickstart/",
+        False,
+        True,
+        "0.0.0.0",
+        8080,
+    )

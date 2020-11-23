@@ -18,7 +18,7 @@ jobs:
       - name: install poetry
         run: |
           curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python;
-          echo "$HOME/.poetry/bin/" >> $GITHUB_PATH
+          echo "$HOME/.poetry/bin/" > $GITHUB_PATH
       - name: install deps
         run: poetry install -v
       - name: flake8
