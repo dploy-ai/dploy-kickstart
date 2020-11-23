@@ -1,3 +1,4 @@
+import numpy as np
 from PIL import Image
 import io
 
@@ -118,3 +119,14 @@ def f9(raw_image):
     im1 = image.crop((left, top, right, bottom))
     im1.format = image.format  # original image extension
     return im1
+
+
+# @dploy endpoint f10
+def f10(input):
+    return np.uint(input)
+
+
+# @dploy endpoint f11
+def f11(input):
+    return np.array(input)
+

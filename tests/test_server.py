@@ -1,7 +1,7 @@
 import os
 import logging
 import re
-
+import numpy as np
 import pytest
 
 import dploy_kickstart.server as ps
@@ -159,6 +159,30 @@ def test_client():
             CROPPED_GOLF_IMG,
             "image/png",
             "image/png",
+            False,
+            200,
+        ),
+        # Numpy Data Types
+        (
+            "server_default.py",
+            "post",
+            "/f10/",
+            61,
+            61,
+            "application/json",
+            "application/json",
+            False,
+            200,
+        ),
+        # Numpy Arrays
+        (
+            "server_default.py",
+            "post",
+            "/f11/",
+            [61, 61],
+            [61, 61],
+            "application/json",
+            "application/json",
             False,
             200,
         ),
