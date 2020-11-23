@@ -48,13 +48,20 @@ def test_json_resp(i, o, mimetype, expected_mimetype, error_expected):
 
 @pytest.mark.parametrize(
     "i, o, mimetype, expected_mimetype, error_expected",
-    [(BytesIO(BIN_IMG), BIN_IMG, None, 'application/octet-stream', False),
-     (BytesIO(BIN_IMG), b'', None, 'application/octet-stream', True),
-     (BytesIO(BIN_IMG), BIN_IMG, 'application/octet-stream', 'application/octet-stream', False),
-     (BytesIO(BIN_IMG), BIN_IMG, 'image/png', 'application/octet-stream', True),
-     (BytesIO(BIN_IMG), BIN_IMG, 'image/png', 'image/png', False),
-     (BytesIO(BIN_IMG), BIN_IMG, 'image/png', 'image/jpg', True),
-     ],
+    [
+        (BytesIO(BIN_IMG), BIN_IMG, None, "application/octet-stream", False),
+        (BytesIO(BIN_IMG), b"", None, "application/octet-stream", True),
+        (
+            BytesIO(BIN_IMG),
+            BIN_IMG,
+            "application/octet-stream",
+            "application/octet-stream",
+            False,
+        ),
+        (BytesIO(BIN_IMG), BIN_IMG, "image/png", "application/octet-stream", True),
+        (BytesIO(BIN_IMG), BIN_IMG, "image/png", "image/png", False),
+        (BytesIO(BIN_IMG), BIN_IMG, "image/png", "image/jpg", True),
+    ],
 )
 def test_bytes_io_resp(i, o, mimetype, expected_mimetype, error_expected):
     with test_client().application.test_request_context():
@@ -69,13 +76,20 @@ def test_bytes_io_resp(i, o, mimetype, expected_mimetype, error_expected):
 
 @pytest.mark.parametrize(
     "i, o, mimetype, expected_mimetype, error_expected",
-    [(BIN_IMG, BIN_IMG, None, 'application/octet-stream', False),
-     (BIN_IMG, b'', None, 'application/octet-stream', True),
-     (BIN_IMG, BIN_IMG, 'application/octet-stream', 'application/octet-stream', False),
-     (BIN_IMG, BIN_IMG, 'image/png', 'application/octet-stream', True),
-     (BIN_IMG, BIN_IMG, 'image/png', 'image/png', False),
-     (BIN_IMG, BIN_IMG, 'image/png', 'image/jpg', True),
-     ],
+    [
+        (BIN_IMG, BIN_IMG, None, "application/octet-stream", False),
+        (BIN_IMG, b"", None, "application/octet-stream", True),
+        (
+            BIN_IMG,
+            BIN_IMG,
+            "application/octet-stream",
+            "application/octet-stream",
+            False,
+        ),
+        (BIN_IMG, BIN_IMG, "image/png", "application/octet-stream", True),
+        (BIN_IMG, BIN_IMG, "image/png", "image/png", False),
+        (BIN_IMG, BIN_IMG, "image/png", "image/jpg", True),
+    ],
 )
 def test_bytes_resp(i, o, mimetype, expected_mimetype, error_expected):
     with test_client().application.test_request_context():
@@ -90,13 +104,14 @@ def test_bytes_resp(i, o, mimetype, expected_mimetype, error_expected):
 
 @pytest.mark.parametrize(
     "i, mimetype, expected_mimetype, error_expected",
-    [(PIL_IMG, None, 'image/png', False),
-     (PIL_IMG, 'application/octet-stream', 'application/octet-stream', False),
-     (PIL_IMG, 'image/png', 'application/octet-stream', True),
-     (PIL_IMG, 'image/png', 'image/png', False),
-     (PIL_IMG, 'image/jpeg', 'image/jpeg', False),
-     (PIL_IMG, 'image/png', 'image/jpg', True),
-     ],
+    [
+        (PIL_IMG, None, "image/png", False),
+        (PIL_IMG, "application/octet-stream", "application/octet-stream", False),
+        (PIL_IMG, "image/png", "application/octet-stream", True),
+        (PIL_IMG, "image/png", "image/png", False),
+        (PIL_IMG, "image/jpeg", "image/jpeg", False),
+        (PIL_IMG, "image/png", "image/jpg", True),
+    ],
 )
 def test_bytes_resp(i, mimetype, expected_mimetype, error_expected):
     with test_client().application.test_request_context():
