@@ -3,20 +3,6 @@ import io
 import typing
 from flask import jsonify, Response, Request
 import dploy_kickstart.annotations as da
-import dploy_kickstart.errors as pe
-import functools
-
-
-@functools.lru_cache()
-def _import_pillow_lib():
-    try:
-        from PIL import Image  # noqa
-    except ImportError as e:
-        raise pe.ScriptImportError(
-            f"{e}\nCannot import Pillow image library."
-            + "Please add `Pillow`"
-            + " to your dependencies.",
-        )
 
 
 def bytes_resp(func_result: typing.Any, mimetype=None) -> Response:
@@ -34,8 +20,6 @@ def bytes_io_resp(func_result: typing.Any, mimetype=None) -> Response:
 
 
 def pil_image_resp(func_result: typing.Any, mimetype=None) -> Response:
-    _import_pillow_lib()
-
     # create file-object in memory
     file_object = io.BytesIO()
     img_format = func_result.format
@@ -52,6 +36,24 @@ def pil_image_resp(func_result: typing.Any, mimetype=None) -> Response:
         return Response(file_object, mimetype=auto_mimetype)
     else:
         return Response(file_object, mimetype=mimetype)
+
+
+def np_tolist_resp(func_result: typing.Any, mimetype=None) -> Response:
+    response = jsonify(func_result.tolist())
+    if mimetype is None:
+        return response
+    else:
+        response.mimetype = mimetype
+        return response
+
+
+def np_item_resp(func_result: typing.Any, mimetype=None) -> Response:
+    response = jsonify(func_result.item())
+    if mimetype is None:
+        return response
+    else:
+        response.mimetype = mimetype
+        return response
 
 
 def json_resp(func_result: typing.Any, mimetype=None) -> Response:
@@ -85,6 +87,25 @@ MIME_TYPE_RES_MAPPER = {
     "list": json_resp,
     "dict": json_resp,
     "bytes": bytes_resp,
+
+    # io.BytesIO return type
     "BytesIO": bytes_io_resp,
+
+    # Pillow Image Return dtype
     "Image": pil_image_resp,
+
+    # Numpy Return dtypes
+    "ndarray": np_tolist_resp,
+    "matrix": np_tolist_resp,
+    "int8": np_item_resp,
+    "uint8": np_item_resp,
+    "int16": np_item_resp,
+    "uint16": np_item_resp,
+    "int32": np_item_resp,
+    "uint32": np_item_resp,
+    "int64": np_item_resp,
+    "uint64": np_item_resp,
+    "float16": np_item_resp,
+    "float32": np_item_resp,
+    "float64": np_item_resp,
 }

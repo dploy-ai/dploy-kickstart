@@ -28,6 +28,7 @@ pytest-cov = "^2.8.1"
 requests = "^2.23.0"
 flynt = "^0.46.1"
 pillow = "^8.0.1"
+numpy = "^1.19.4"
 
 [tool.black]
 line-length = 88
