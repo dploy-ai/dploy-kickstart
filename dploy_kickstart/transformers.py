@@ -10,7 +10,7 @@ import functools
 @functools.lru_cache()
 def _import_pillow_lib():
     try:
-        from PIL import Image # noqa
+        from PIL import Image  # noqa
     except ImportError as e:
         raise pe.ScriptImportError(
             f"{e}\nCannot import Pillow image library."

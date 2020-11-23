@@ -113,7 +113,7 @@ def test_bytes_resp(i, o, mimetype, expected_mimetype, error_expected):
         (PIL_IMG, "image/png", "image/jpg", True),
     ],
 )
-def test_bytes_resp(i, mimetype, expected_mimetype, error_expected):
+def test_pil_img_resp(i, mimetype, expected_mimetype, error_expected):
     with test_client().application.test_request_context():
         r = dt.pil_image_resp(i, mimetype=mimetype)
         o = Image.open(BytesIO(r.get_data()))
