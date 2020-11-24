@@ -73,6 +73,12 @@ def t11():
     return img1
 
 
+# @dploy endpoint get_model_name
+# @dploy response_method get
+def t12():
+    return "kickstart"
+
+
 @pytest.mark.parametrize(
     "callable,endpoint,endpoint_path,has_args,output, error",
     [
@@ -87,6 +93,7 @@ def t11():
         (t9, True, "/get_image2/", True, img1, True),
         (t10, True, "/get_image3/", True, img1, True),
         (t11, True, "/get_image4/", True, img1, True),
+        (t12, True, "/get_model_name/", True, "kickstart", False),
     ],
 )
 def test_callable_annotation(

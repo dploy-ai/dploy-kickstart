@@ -27,7 +27,11 @@ def test_req_install(req_file, error_expected):
 
 @pytest.mark.parametrize(
     "setup_py, error_expected",
-    [("my_pkg/setup.py", False), ("my_pkg/stp.py", True), ("non_existing_pkg/setup.py", True),],
+    [
+        ("my_pkg/setup.py", False),
+        ("my_pkg/stp.py", True),
+        ("non_existing_pkg/setup.py", True),
+    ],
 )
 def test_setuppy_install(setup_py, error_expected):
     p = os.path.join(THIS_DIR, "assets", "deps_tests")
