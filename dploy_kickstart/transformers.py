@@ -87,13 +87,10 @@ MIME_TYPE_RES_MAPPER = {
     "list": json_resp,
     "dict": json_resp,
     "bytes": bytes_resp,
-
     # io.BytesIO return type
     "BytesIO": bytes_io_resp,
-
     # Pillow Image Return dtype
     "Image": pil_image_resp,
-
     # Numpy Return dtypes
     "ndarray": np_tolist_resp,
     "matrix": np_tolist_resp,

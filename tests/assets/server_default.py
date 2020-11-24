@@ -129,4 +129,3 @@ def f10(input):
 # @dploy endpoint f11
 def f11(input):
     return np.array(input)
-

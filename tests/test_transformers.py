@@ -134,16 +134,21 @@ def test_pil_img_resp(i, mimetype, expected_mimetype, error_expected):
         (np.array([1, 2, 3]), [222, 2222, 222], None, "application/json", True),
         (np.array([1, 2, 3]), [1, 2, 3], "application/json", "application/json", False),
         (np.array([1, 2, 3]), [1, 2, 3], "application/json", "data/text", True),
-        (np.array([1, 2, 3]), b'[1,2,3]\n', "data/text", "data/text", False),
-        (np.array([1, 2, 3]), b'[1,2,3]\n', None, "data/text", True),
-
+        (np.array([1, 2, 3]), b"[1,2,3]\n", "data/text", "data/text", False),
+        (np.array([1, 2, 3]), b"[1,2,3]\n", None, "data/text", True),
         # Tests for matrix
         (np.matrix([1, 2, 3]), [[1, 2, 3]], None, "application/json", False),
         (np.matrix([1, 2, 3]), [[222, 2222, 222]], None, "application/json", True),
-        (np.matrix([1, 2, 3]), [[1, 2, 3]], "application/json", "application/json", False),
+        (
+            np.matrix([1, 2, 3]),
+            [[1, 2, 3]],
+            "application/json",
+            "application/json",
+            False,
+        ),
         (np.matrix([1, 2, 3]), [[1, 2, 3]], "application/json", "data/text", True),
-        (np.matrix([1, 2, 3]), b'[[1,2,3]]\n', "data/text", "data/text", False),
-        (np.matrix([1, 2, 3]), b'[[1,2,3]]\n', None, "data/text", True),
+        (np.matrix([1, 2, 3]), b"[[1,2,3]]\n", "data/text", "data/text", False),
+        (np.matrix([1, 2, 3]), b"[[1,2,3]]\n", None, "data/text", True),
     ],
 )
 def test_numpy_list_resp(i, o, mimetype, expected_mimetype, error_expected):
@@ -176,13 +181,11 @@ def test_numpy_list_resp(i, o, mimetype, expected_mimetype, error_expected):
         (np.float16(61), 61, None, "application/json", False),
         (np.float32(61), 61, None, "application/json", False),
         (np.float64(61), 61, None, "application/json", False),
-
         # Some problematic examples
         (np.float64(61), np.float64(61), None, "application/json", True),
         (np.float64(61), 61, "text/data", "application/json", True),
-
         # Different Mimetypes
-        (np.float64(61), b'61.0\n', "text/data", "text/data", False),
+        (np.float64(61), b"61.0\n", "text/data", "text/data", False),
     ],
 )
 def test_numpy_item_resp(i, o, mimetype, expected_mimetype, error_expected):
