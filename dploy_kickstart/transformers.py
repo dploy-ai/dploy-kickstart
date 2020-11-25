@@ -1,25 +1,27 @@
 """Utilities to transform requests and responses."""
 import io
 import typing
-from flask import jsonify, Response, Request
+from fastapi import Body, Response
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 import dploy_kickstart.annotations as da
 
 
-def bytes_resp(func_result: typing.Any, mimetype=None) -> Response:
-    if mimetype is None:
-        return Response(func_result, mimetype="application/octet-stream")
+def bytes_resp(func_result: typing.Any, media_type=None) -> Response:
+    if media_type is None:
+        return Response(func_result, media_type="application/octet-stream")
     else:
-        return Response(func_result, mimetype=mimetype)
+        return Response(func_result, media_type=media_type)
 
 
-def bytes_io_resp(func_result: typing.Any, mimetype=None) -> Response:
-    if mimetype is None:
-        return Response(func_result.getvalue(), mimetype="application/octet-stream")
+def bytes_io_resp(func_result: typing.Any, media_type=None) -> Response:
+    if media_type is None:
+        return Response(func_result.getvalue(), media_type="application/octet-stream")
     else:
-        return Response(func_result.getvalue(), mimetype=mimetype)
+        return Response(func_result.getvalue(), media_type=media_type)
 
 
-def pil_image_resp(func_result: typing.Any, mimetype=None) -> Response:
+def pil_image_resp(func_result: typing.Any, media_type=None) -> Response:
     # create file-object in memory
     file_object = io.BytesIO()
     img_format = func_result.format
@@ -27,58 +29,51 @@ def pil_image_resp(func_result: typing.Any, mimetype=None) -> Response:
     # write image to a file-object
     # Don't change quality and subsampling since save decrease the quality by default
     func_result.save(file_object, img_format, quality=100, subsampling=0)
-    auto_mimetype = f"image/{img_format.lower()}"
+    auto_media_type = f"image/{img_format.lower()}"
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
 
-    if mimetype is None:
-        return Response(file_object, mimetype=auto_mimetype)
+    if media_type is None:
+        return Response(file_object, media_type=auto_media_type)
     else:
-        return Response(file_object, mimetype=mimetype)
+        return Response(file_object, media_type=media_type)
 
 
-def np_tolist_resp(func_result: typing.Any, mimetype=None) -> Response:
-    response = jsonify(func_result.tolist())
-    if mimetype is None:
-        return response
+def np_tolist_resp(func_result: typing.Any, media_type=None) -> Response:
+    response = jsonable_encoder(func_result.tolist())
+    if media_type is None:
+        return JSONResponse(response, media_type="application/json")
     else:
-        response.mimetype = mimetype
-        return response
+        return JSONResponse(response, media_type=media_type)
 
 
-def np_item_resp(func_result: typing.Any, mimetype=None) -> Response:
-    response = jsonify(func_result.item())
-    if mimetype is None:
-        return response
+def np_item_resp(func_result: typing.Any, media_type=None) -> Response:
+    response = jsonable_encoder(func_result.item())
+    if media_type is None:
+        return JSONResponse(response, media_type="application/json")
     else:
-        response.mimetype = mimetype
-        return response
+        return JSONResponse(response, media_type=media_type)
 
 
-def json_resp(func_result: typing.Any, mimetype=None) -> Response:
+def json_resp(func_result: typing.Any, media_type=None) -> Response:
     """Transform json response."""
-    response = jsonify(func_result)
-    if mimetype is None:
-        return response
+    response = jsonable_encoder(func_result)
+    if media_type is None:
+        return JSONResponse(response, media_type="application/json")
     else:
-        response.mimetype = mimetype
-        return response
+        return JSONResponse(response, media_type=media_type)
 
 
-def default_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
-    return f(req.data)
+def default_req(f: da.AnnotatedCallable, body=Body(...)) -> typing.Any:
+    return f(body)
 
 
-def json_req(f: da.AnnotatedCallable, req: Request) -> typing.Any:
-    """Preprocess application/json request."""
-    if f.json_to_kwargs:
-        return f(**req.json)
-    else:
-        return f(req.json)
+def json_to_kwargs_req(f: da.AnnotatedCallable, body=Body(...)) -> typing.Any:
+    return f(**body)
 
 
-MIME_TYPE_REQ_MAPPER = {True: json_req, False: default_req}
+MIME_TYPE_REQ_MAPPER = {True: json_to_kwargs_req, False: default_req}
 
 MIME_TYPE_RES_MAPPER = {
     "int": json_resp,

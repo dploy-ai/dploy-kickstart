@@ -17,6 +17,8 @@ waitress = "^1.4.3"
 paste = "^3.4.0"
 flask = "^1.1.2"
 apispec = "^3.3.0"
+uvicorn = "^0.12.3"
+fastapi = "^0.61.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

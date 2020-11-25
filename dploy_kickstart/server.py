@@ -3,16 +3,17 @@
 import logging
 import typing
 
-from flask import Flask, jsonify
+from fastapi import FastAPI, APIRouter
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 
 import dploy_kickstart.wrapper as pw
 import dploy_kickstart.errors as pe
-import dploy_kickstart.openapi as po
 
 log = logging.getLogger(__name__)
 
 
-def append_entrypoint(app: Flask, entrypoint: str, location: str) -> Flask:
+def append_entrypoint(app: FastAPI, entrypoint: str, location: str) -> FastAPI:
     """Add routes/functions defined in entrypoint."""
     mod = pw.import_entrypoint(entrypoint, location)
     fm = pw.get_func_annotations(mod)
@@ -20,7 +21,8 @@ def append_entrypoint(app: Flask, entrypoint: str, location: str) -> Flask:
     if not any([e.endpoint for e in fm]):
         raise Exception("no endpoints defined")
 
-    openapi_spec = po.base_spec(title=entrypoint)
+    api_router = APIRouter()
+
     # iterate over annotations in usercode
     for f in fm:
         if f.endpoint:
@@ -28,38 +30,27 @@ def append_entrypoint(app: Flask, entrypoint: str, location: str) -> Flask:
                 f"adding endpoint for func: {f.__name__} (func_args: {f.comment_args})"
             )
 
-            app.add_url_rule(
-                f.endpoint_path,
-                f.endpoint_path,
-                pw.func_wrapper(f),
+            api_router.add_api_route(
                 methods=[f.request_method.upper()],
-                strict_slashes=False,
+                path=f.endpoint_path,
+                endpoint=pw.func_wrapper(f),
             )
-
-            # add info about endpoint to api spec
-            po.path_spec(openapi_spec, f)
-
-    app.add_url_rule(
-        "/openapi.yaml", "/openapi.yaml", openapi_spec.to_yaml, methods=["GET"],
-    )
-
+    app.include_router(api_router)
     return app
 
 
-def generate_app() -> Flask:
-    """Generate a Flask app."""
-    app = Flask(__name__)
+def generate_app() -> FastAPI:
+    """Generate a FastAPI app."""
+    app = FastAPI()
 
-    @app.route("/healthz/", methods=["GET"], strict_slashes=False)
-    def health_check() -> typing.Tuple[str, int]:
+    @app.get("/healthz/", status_code=200)
+    async def health_check() -> None:
         return "healthy", 200
 
-    @app.errorhandler(pe.ServerException)
-    def handle_server_exception(error: pe.ServerException) -> None:
+    @app.exception_handler(pe.ServerException)
+    async def handle_server_exception(_, error: pe.ServerException) -> None:
         response_dict = error.to_dict()
         log.error(response_dict)
-        response = jsonify(response_dict)
-        response.status_code = error.status_code
-        return response
-
+        response = jsonable_encoder(error)
+        return JSONResponse(status_code=error.status_code, content=response)
     return app

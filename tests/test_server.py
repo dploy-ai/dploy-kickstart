@@ -1,9 +1,8 @@
 import os
 import logging
 import re
-import numpy as np
 import pytest
-
+from fastapi.testclient import TestClient
 import dploy_kickstart.server as ps
 from io import StringIO
 
@@ -21,8 +20,7 @@ CROPPED_GOLF_IMG = open(
 
 def test_client():
     app = ps.generate_app()
-    app.config["TESTING"] = True
-    return app.test_client()
+    return TestClient(app)
 
 
 @pytest.mark.parametrize(
@@ -290,21 +288,13 @@ def test_server_generation(
         assert error
         return
 
-    t_client = app.test_client()
+    t_client = TestClient(app)
     try:
-        if "json" in content_type:
-            r = getattr(t_client, method)(
-                path,
-                json=payload,
-                headers={"Accept": accept, "Content-Type": content_type},
-            )
-
-        else:
-            r = getattr(t_client, method)(
-                path,
-                data=payload,
-                headers={"Accept": accept, "Content-Type": content_type},
-            )
+        a=5
+        r = getattr(t_client, method)(
+            path, data=payload, headers={"Accept": accept, "Content-Type": "image/png"}
+        )
+        a = 5
     except:
         assert error
         return
@@ -318,10 +308,7 @@ def test_server_generation(
     if "json" in content_type:
         assert r.json == response
     else:
-        try:
-            assert r.data == response
-        except:
-            a = 5
+        assert r.data == response
 
 
 @pytest.mark.parametrize(

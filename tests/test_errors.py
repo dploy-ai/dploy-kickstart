@@ -1,7 +1,6 @@
 import os
 import dploy_kickstart.errors as pe
 import dploy_kickstart.wrapper as pw
-import dploy_kickstart.server as ps
 import pytest
 
 

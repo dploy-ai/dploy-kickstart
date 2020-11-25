@@ -9,8 +9,9 @@ import atexit
 import functools
 import typing
 import traceback
+import json
 
-from flask import request
+from fastapi import Request, Body
 import dploy_kickstart.errors as pe
 
 import dploy_kickstart.transformers as pt
@@ -102,10 +103,10 @@ def import_entrypoint(entrypoint: str, location: str) -> typing.Generic:
 def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
     """Wrap functions with request logic."""
 
-    def exposed_func() -> typing.Callable:
+    async def exposed_func(request: Request, body=Body(...)) -> typing.Callable:
         # preprocess input for callable
         try:
-            res = pt.MIME_TYPE_REQ_MAPPER[request.is_json](f, request)
+            res = pt.MIME_TYPE_REQ_MAPPER[f.json_to_kwargs](f, body)
         except Exception:
             raise pe.UserApplicationError(
                 message=f"error in executing '{f.__name__()}' method.",
@@ -125,3 +126,11 @@ def func_wrapper(f: pa.AnnotatedCallable) -> typing.Callable:
             )
 
     return exposed_func
+
+
+def is_jsonable(x):
+    try:
+        json.dumps(x)
+        return True
+    except:
+        return False

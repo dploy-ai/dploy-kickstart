@@ -4,10 +4,8 @@ import os
 import logging
 import typing
 import signal
-
+import uvicorn
 import click
-from waitress import serve as waitress_serve
-from paste.translogger import TransLogger
 
 from dploy_kickstart import deps as pd
 from dploy_kickstart import server as ps
@@ -27,39 +25,39 @@ def cli() -> None:
     pass
 
 
-@cli.command(help="run dploy_kickstart server")
-@click.option(
-    "-e", "--entrypoint", required=True, help=".py or .ipynb to use as entrypoint"
-)
-@click.option(
-    "-l",
-    "--location",
-    required=True,
-    help="location of the script or notebook (and that will "
-    + "be used as execution context)",
-)
-@click.option(
-    "-d",
-    "--deps",
-    help="install dependencies; comma separated paths to either requirements.txt "
-    + "or setup.py files. note that this can be run separately via the "
-    + "'install-deps' command",
-)
-@click.option(
-    "--wsgi/--no-wsgi",
-    default=True,
-    help="Use Waitress as a WSGI server, defaults to True,"
-    + " else launches a Flask debug server.",
-)
-@click.option(
-    "-h", "--host", help="Host to serve on, defaults to '0.0.0.0'", default="0.0.0.0"
-)
-@click.option(
-    "-p", "--port", help="Port to serve on, defaults to '8080'", default=8080, type=int
-)
+# @cli.command(help="run dploy_kickstart server")
+# @click.option(
+#     "-e", "--entrypoint", required=True, help=".py or .ipynb to use as entrypoint"
+# )
+# @click.option(
+#     "-l",
+#     "--location",
+#     required=True,
+#     help="location of the script or notebook (and that will "
+#     + "be used as execution context)",
+# )
+# @click.option(
+#     "-d",
+#     "--deps",
+#     help="install dependencies; comma separated paths to either requirements.txt "
+#     + "or setup.py files. note that this can be run separately via the "
+#     + "'install-deps' command",
+# )
+# @click.option(
+#     "--wsgi/--no-wsgi",
+#     default=True,
+#     help="Use Waitress as a WSGI server, defaults to True,"
+#     + " else launches a Flask debug server.",
+# )
+# @click.option(
+#     "-h", "--host", help="Host to serve on, defaults to '0.0.0.0'", default="0.0.0.0"
+# )
+# @click.option(
+#     "-p", "--port", help="Port to serve on, defaults to '8080'", default=8080, type=int
+# )
 def serve(
     entrypoint: str, location: str, deps: str, wsgi: bool, host: str, port: int
-) -> typing.Any:
+) -> None:
     """CLI serve."""
     if deps:
         click.echo(f"Installing deps: {deps}")
@@ -70,19 +68,11 @@ def serve(
     app = ps.generate_app()
     app = ps.append_entrypoint(app, entrypoint, os.path.abspath(location))
 
-    if not wsgi:
-        click.echo("Starting Flask Development server")
-        app.run(
-            host=os.getenv("DPLOY_KICKSTART_HOST", "0.0.0.0"),
-            port=int(os.getenv("DPLOY_KICKSTART_PORT", 8080)),
-        )
-    else:
-        click.echo("Starting Waitress server")
-        waitress_serve(
-            TransLogger(app, setup_console_handler=False),
-            host=os.getenv("dploy_kickstart_HOST", "0.0.0.0"),
-            port=int(os.getenv("dploy_kickstart_PORT", 8080)),
-        )
+    uvicorn.run(
+        app,
+        host=os.getenv("DPLOY_KICKSTART_HOST", "0.0.0.0"),
+        port=int(os.getenv("DPLOY_KICKSTART_PORT", 8080)),
+    )
 
 
 @cli.command(help="install dependencies")
@@ -121,3 +111,14 @@ def _deps(deps: str, location: str) -> None:
                 "Supported formats: "
                 "requirements.txt, setup.py".format(r)
             )
+
+
+if __name__ == '__main__':
+    serve(
+        entrypoint='/Users/baturayofluoglu/PycharmProjects/dploy-kickstart/foobar.py',
+        location='/Users/baturayofluoglu/PycharmProjects/dploy-kickstart/',
+        deps='',
+        wsgi=True,
+        host='',
+        port=8080
+    )
